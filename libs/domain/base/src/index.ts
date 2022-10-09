@@ -1,1 +1,2 @@
-export * from './lib/domain-base';
+export { default as Identifier } from './Identifier'
+export * from './Identifier'
