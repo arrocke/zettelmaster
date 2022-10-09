@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@zettelmaster/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@zettelmaster/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@zettelmaster/domain/base": ["libs/domain/base/src/index.ts"],
+      "@zettelmaster/domain/zettel": ["libs/domain/zettel/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
