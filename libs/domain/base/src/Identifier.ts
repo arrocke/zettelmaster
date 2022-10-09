@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 
-export class IdentifierError extends Error {
+/** Thrown when an Identifier could not be created from a string because it is not a valid ObjectId hex string. */
+export class InvalidIdentifierError extends Error {
 	constructor(value: string) {
 		super(`Cannot construct an Identifier from the string "${value}".`)
 	}
@@ -23,13 +24,14 @@ export default class Identifier {
 	/**
 	 * Create an Identifier from the raw ID value.
 	 * @param id The raw value of the mongo identifier. Strings will be converted to an ObjectId.
+	 * @throws {InvalidIdentifierError} When the string value to create the Identifier from is not a valid ObjectId hex string.
 	 */
 	constructor(id: string | ObjectId) {
 		if (typeof id === 'string') {
 			try {
 				this._id = ObjectId.createFromHexString(id)
 			} catch (error) {
-				throw new IdentifierError(id)
+				throw new InvalidIdentifierError(id)
 			}
 		} else {
 			this._id = id

@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import Identifier, { IdentifierError } from './Identifier'
+import Identifier, { InvalidIdentifierError } from './Identifier'
 
 describe('constructon', () => {
 	test('creates an Identifier from a string', () => {
@@ -16,7 +16,7 @@ describe('constructon', () => {
 
 	test('throw an error if the string is not a valid hex string', () => {
 		const id = 'not an object id'
-		expect(() => new Identifier('not an object id')).toThrowError(new IdentifierError(id))
+		expect(() => new Identifier('not an object id')).toThrowError(new InvalidIdentifierError(id))
 	})
 })
 
