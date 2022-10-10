@@ -37,18 +37,22 @@ export interface NoteTextData {
 
 /** Represents rich text content for a note. */
 export default class NoteText extends ValueObject<NoteTextData> {
+  /** The JSON representation of the rich text document */
   get document(): DocumentNode {
     return this._data.document
   }
 
+  /** The list of note ids linked to in the document. */
   get links(): readonly Identifier[] {
     return this._data.links
   }
 
+  /** The list of external references in the document. */
   get references(): readonly Identifier[] {
     return this._data.references
   }
 
+  /** Creates a new NoteText from a rich text document representation. */
   static createFromDocument(doc: DocumentNode): NoteText {
     const links = findNoteLinks(doc)
     const references = findReferences(doc)
