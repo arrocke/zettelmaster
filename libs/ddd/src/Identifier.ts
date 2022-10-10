@@ -9,16 +9,16 @@ export class InvalidIdentifierError extends Error {
 
 /** Represents an unique ID for use in mongo databases. */
 export default class Identifier {
-  private readonly _id: ObjectId
+  readonly _value: ObjectId
 
   /** The value of the identfier as a string. */
   get value(): string {
-    return this._id.toHexString()
+    return this._value.toHexString()
   }
 
   /** Tests whether another Identifier is equal to this one. */
   equals(other: Identifier) {
-    return this._id.equals(other._id)
+    return this._value.equals(other._value)
   }
 
   /**
@@ -29,12 +29,12 @@ export default class Identifier {
   constructor(id: string | ObjectId) {
     if (typeof id === 'string') {
       try {
-        this._id = ObjectId.createFromHexString(id)
+        this._value = ObjectId.createFromHexString(id)
       } catch (error) {
         throw new InvalidIdentifierError(id)
       }
     } else {
-      this._id = id
+      this._value = id
     }
   }
 

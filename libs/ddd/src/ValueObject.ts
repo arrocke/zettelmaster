@@ -5,7 +5,7 @@ import deepEqual from 'deep-equal'
  * Value objects should be immutable since they do not have a lifecycle.
  */
 export default abstract class ValueObject<T> {
-  protected _data: T
+  _data: T
 
   /** Create a ValueObject from its raw data. */
   constructor(data: T) {
