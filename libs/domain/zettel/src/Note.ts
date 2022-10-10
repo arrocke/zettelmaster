@@ -24,4 +24,9 @@ export default class Note extends Entity<NoteData> {
   static create(data: NoteData): Note {
     return new Note(Identifier.generate(), data)
   }
+
+  /** Update the text of this note. */
+  updateText(newText: NoteText) {
+    this._data.text = newText
+  }
 }
