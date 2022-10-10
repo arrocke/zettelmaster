@@ -1,4 +1,4 @@
-import { Entity, Identifier } from '@zettelmaster/domain/base'
+import { Entity, Identifier } from '@zettelmaster/ddd'
 import NoteText from './NoteText'
 
 export interface NoteData {

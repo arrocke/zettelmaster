@@ -1,4 +1,4 @@
-import { Entity, Identifier } from '@zettelmaster/domain/base'
+import { Entity, Identifier } from '@zettelmaster/ddd'
 
 export interface ReferenceData {
   name: string

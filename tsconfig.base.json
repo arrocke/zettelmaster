@@ -17,8 +17,8 @@
     "esModuleInterop": true,
     "paths": {
       "@zettelmaster/api-interfaces": ["libs/api-interfaces/src/index.ts"],
-      "@zettelmaster/domain/base": ["libs/domain/base/src/index.ts"],
-      "@zettelmaster/domain/zettel": ["libs/domain/zettel/src/index.ts"]
+      "@zettelmaster/ddd": ["libs/ddd/src/index.ts"],
+      "@zettelmaster/zettel/domain": ["libs/zettel/domain/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

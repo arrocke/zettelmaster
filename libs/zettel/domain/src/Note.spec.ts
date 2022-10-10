@@ -1,4 +1,4 @@
-import { Identifier } from '@zettelmaster/domain/base'
+import { Identifier } from '@zettelmaster/ddd'
 import Note from './Note'
 import NoteText, { DocumentNode } from './NoteText'
 

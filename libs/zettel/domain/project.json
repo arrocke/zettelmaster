@@ -1,31 +1,31 @@
 {
-  "name": "domain-zettel",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domain/zettel/src",
+  "name": "zettel-domain",
+  "sourceRoot": "libs/zettel/domain/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/domain/zettel",
-        "main": "libs/domain/zettel/src/index.ts",
-        "tsConfig": "libs/domain/zettel/tsconfig.lib.json",
-        "assets": ["libs/domain/zettel/*.md"]
+        "outputPath": "dist/libs/zettel/domain",
+        "main": "libs/zettel/domain/src/index.ts",
+        "tsConfig": "libs/zettel/domain/tsconfig.lib.json",
+        "assets": ["libs/zettel/domain/*.md"]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/domain/zettel/**/*.ts"]
+        "lintFilePatterns": ["libs/zettel/domain/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/domain/zettel"],
+      "outputs": ["coverage/libs/zettel/domain"],
       "options": {
-        "jestConfig": "libs/domain/zettel/jest.config.ts",
+        "jestConfig": "libs/zettel/domain/jest.config.ts",
         "passWithNoTests": true
       }
     }

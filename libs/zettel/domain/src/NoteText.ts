@@ -1,4 +1,4 @@
-import { Identifier, ValueObject } from '@zettelmaster/domain/base'
+import { Identifier, ValueObject } from '@zettelmaster/ddd'
 import {
   DocumentNode,
   filterMarks,

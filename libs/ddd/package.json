@@ -1,5 +1,5 @@
 {
-  "name": "@zettelmaster/domain/zettel",
+  "name": "@zettelmaster/ddd",
   "version": "0.0.1",
   "type": "commonjs"
 }
