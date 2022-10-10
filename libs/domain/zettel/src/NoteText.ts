@@ -7,8 +7,14 @@ import {
   Mark,
 } from './rich-text';
 
+export * from './rich-text'
+
 /** Represents rich text content for a note. */
 export default class NoteText extends ValueObject<DocumentNode> {
+  get document() {
+    return this._data
+  }
+
 	/** Recursively search through text contents for the first node that meets the condition. */
   findNode(fn: (node: Node) => boolean): Node | undefined {
     return findNodeRecursive(this._data, fn);
