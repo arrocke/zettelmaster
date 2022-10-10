@@ -1,4 +1,4 @@
-import * as express from 'express'
+import express from 'express'
 import { Message } from '@zettelmaster/api-interfaces'
 
 const app = express()

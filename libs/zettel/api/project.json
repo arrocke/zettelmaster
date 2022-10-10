@@ -1,0 +1,35 @@
+{
+  "name": "zettel-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/zettel/api/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/zettel/api",
+        "tsConfig": "libs/zettel/api/tsconfig.lib.json",
+        "packageJson": "libs/zettel/api/package.json",
+        "main": "libs/zettel/api/src/index.ts",
+        "assets": ["libs/zettel/api/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/zettel/api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/zettel/api"],
+      "options": {
+        "jestConfig": "libs/zettel/api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
