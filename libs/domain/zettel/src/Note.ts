@@ -16,7 +16,11 @@ export default class Note extends Entity<NoteData> {
     return this._data.text.links
   }
 
-  /** Creates a new note with its text. */
+  get references() {
+    return this._data.text.references
+  }
+
+  /** Creates a new Note with its text. */
   static create(data: NoteData): Note {
     return new Note(Identifier.generate(), data)
   }

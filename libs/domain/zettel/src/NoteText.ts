@@ -1,5 +1,11 @@
 import { Identifier, ValueObject } from '@zettelmaster/domain/base'
-import { DocumentNode, filterMarks, LinkMark } from './rich-text'
+import {
+  DocumentNode,
+  filterMarks,
+  filterNodes,
+  LinkMark,
+  ReferenceNode,
+} from './rich-text'
 
 export * from './rich-text'
 
@@ -13,23 +19,39 @@ function findNoteLinks(document: DocumentNode): Identifier[] {
   ).map((id) => new Identifier(id))
 }
 
+function findReferences(document: DocumentNode): Identifier[] {
+  const referenceNodes = filterNodes(
+    document,
+    (node) => node.type === 'reference'
+  ) as ReferenceNode[]
+  return Array.from(new Set(referenceNodes.map((node) => node.attrs.id))).map(
+    (id) => new Identifier(id)
+  )
+}
+
 export interface NoteTextData {
   document: DocumentNode
-  links: readonly Identifier[]
+  links: Identifier[]
+  references: Identifier[]
 }
 
 /** Represents rich text content for a note. */
 export default class NoteText extends ValueObject<NoteTextData> {
-  get document() {
+  get document(): DocumentNode {
     return this._data.document
   }
 
-  get links() {
+  get links(): readonly Identifier[] {
     return this._data.links
+  }
+
+  get references(): readonly Identifier[] {
+    return this._data.references
   }
 
   static createFromDocument(doc: DocumentNode): NoteText {
     const links = findNoteLinks(doc)
-    return new NoteText({ document: doc, links })
+    const references = findReferences(doc)
+    return new NoteText({ document: doc, links, references })
   }
 }

@@ -29,7 +29,14 @@ export interface ImageNode {
     title?: string
   }
 }
-export type InlineNode = TextNode | ImageNode
+export interface ReferenceNode {
+  type: 'reference'
+  attrs: {
+    id: string
+  }
+  content: TextNode[]
+}
+export type InlineNode = TextNode | ImageNode | ReferenceNode
 
 export interface ParagraphNode {
   type: 'paragraph'
