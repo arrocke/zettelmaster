@@ -1,19 +1,19 @@
-import { Entity, Identifier } from "@zettelmaster/domain/base";
-import NoteText from "./NoteText";
+import { Entity, Identifier } from '@zettelmaster/domain/base'
+import NoteText from './NoteText'
 
 export interface NoteData {
-	text: NoteText
+  text: NoteText
 }
 
 /** Represents a zettel note and its references and links. */
 export default class Note extends Entity<NoteData> {
-	/** The text document of the note. */
-	get text() {
-		return this._data.text
-	}
+  /** The text document of the note. */
+  get text() {
+    return this._data.text
+  }
 
-	/** Creates a new note with its text. */
-	static create(data: NoteData): Note {
-		return new Note(Identifier.generate(), data)
-	}
+  /** Creates a new note with its text. */
+  static create(data: NoteData): Note {
+    return new Note(Identifier.generate(), data)
+  }
 }
