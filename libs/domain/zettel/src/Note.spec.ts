@@ -8,13 +8,14 @@ describe('create', () => {
       content: [{ type: 'paragraph', content: [] }],
     }
     const note = Note.create({
-      text: new NoteText(text),
+      text: new NoteText({ document: text, links: [] }),
     })
-    expect(note.text.document).toEqual(text)
+    expect(note.text).toEqual(text)
+    expect(note.links).toEqual([])
     expect(
       note.equals(
         Note.create({
-          text: new NoteText(text),
+          text: new NoteText({ document: text, links: [] }),
         })
       )
     ).toEqual(false)

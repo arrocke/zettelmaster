@@ -10,7 +10,8 @@ export interface CodeMark {
 export interface LinkMark {
   type: 'link'
   attrs: {
-    href: string
+    href?: string
+    noteId?: string
   }
 }
 export type Mark = BoldMark | ItalicMark | CodeMark | LinkMark
@@ -18,14 +19,14 @@ export type Mark = BoldMark | ItalicMark | CodeMark | LinkMark
 export interface TextNode {
   type: 'text'
   text: string
-  marks: Mark[]
+  marks?: Mark[]
 }
 export interface ImageNode {
   type: 'image'
   attrs: {
     src: string
-    alt: string
-    title: string
+    alt?: string
+    title?: string
   }
 }
 export type InlineNode = TextNode | ImageNode
@@ -79,14 +80,28 @@ export interface DocumentNode {
 
 export type Node = BlockNode | InlineNode | LineItemNode | DocumentNode
 
-export function findNodeRecursive(
+export function isMarkType<MarkType extends Mark>(
+  mark: Mark,
+  type: MarkType['type']
+): mark is MarkType {
+  return mark.type === type
+}
+
+export function isNodeType<NodeType extends Node>(
+  node: Node,
+  type: NodeType['type']
+): node is NodeType {
+  return node.type === type
+}
+
+export function findNode(
   node: Node,
   fn: (node: Node) => boolean
 ): Node | undefined {
   if (fn(node)) return node
   else if ('content' in node) {
     for (const child of node.content) {
-      const nestedResult = findNodeRecursive(child, fn)
+      const nestedResult = findNode(child, fn)
       if (nestedResult) {
         return nestedResult
       }
@@ -95,22 +110,38 @@ export function findNodeRecursive(
   return
 }
 
-export function findMarkRecursive(
+export function filterNodes(node: Node, fn: (node: Node) => boolean): Node[] {
+  let nodes: Node[] = []
+  if (fn(node)) nodes.push(node)
+  if ('content' in node)
+    nodes = nodes.concat(...node.content.map((child) => filterNodes(child, fn)))
+  return nodes
+}
+
+export function findMark(
   node: Node,
   fn: (node: Mark) => boolean
 ): Mark | undefined {
   if ('marks' in node) {
-    for (const mark of node.marks) {
+    for (const mark of node.marks ?? []) {
       if (fn(mark)) return mark
     }
   }
   if ('content' in node) {
     for (const child of node.content) {
-      const nestedResult = findMarkRecursive(child, fn)
+      const nestedResult = findMark(child, fn)
       if (nestedResult) {
         return nestedResult
       }
     }
   }
   return
+}
+
+export function filterMarks(node: Node, fn: (node: Mark) => boolean): Mark[] {
+  let nodes: Mark[] = []
+  if ('marks' in node && node.marks) nodes = nodes.concat(node.marks.filter(fn))
+  if ('content' in node)
+    nodes = nodes.concat(...node.content.map((child) => filterMarks(child, fn)))
+  return nodes
 }

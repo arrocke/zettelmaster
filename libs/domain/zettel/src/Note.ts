@@ -9,7 +9,11 @@ export interface NoteData {
 export default class Note extends Entity<NoteData> {
   /** The text document of the note. */
   get text() {
-    return this._data.text
+    return this._data.text.document
+  }
+
+  get links() {
+    return this._data.text.links
   }
 
   /** Creates a new note with its text. */

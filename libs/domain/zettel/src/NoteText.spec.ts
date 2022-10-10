@@ -1,107 +1,70 @@
-import NoteText, {
-  CodeBlockNode,
-  DocumentNode,
-  LinkMark,
-  TextNode,
-} from './NoteText'
+import { Identifier } from '@zettelmaster/domain/base'
+import NoteText, { DocumentNode } from './NoteText'
 
-describe('findNode', () => {
-  test('returns found inline node', () => {
-    const nodeToFind: TextNode = {
-      type: 'text',
-      text: 'world',
-      marks: [{ type: 'bold' }],
-    }
-    const data: DocumentNode = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [{ type: 'text', text: 'Hello ', marks: [] }, nodeToFind],
-        },
-      ],
-    }
-    const node = new NoteText(data)
-    expect(
-      node.findNode(
-        (node) =>
-          node.type === 'text' &&
-          node.marks.some((mark) => mark.type === 'bold')
-      )
-    ).toEqual(nodeToFind)
-  })
-
-  test('returns found block node', () => {
-    const nodeToFind: CodeBlockNode = {
-      type: 'codeBlock',
-      content: [{ type: 'text', text: 'hello world', marks: [] }],
-    }
-    const data: DocumentNode = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [{ type: 'text', text: 'Hello ', marks: [] }],
-        },
-        nodeToFind,
-      ],
-    }
-    const node = new NoteText(data)
-    expect(node.findNode((node) => node.type === 'codeBlock')).toEqual(
-      nodeToFind
-    )
-  })
-
-  test('returns undefined if no node is found', () => {
-    const data: DocumentNode = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [{ type: 'text', text: 'Hello world', marks: [] }],
-        },
-      ],
-    }
-    const node = new NoteText(data)
-    expect(node.findNode((node) => node.type === 'blockquote')).toEqual(
-      undefined
-    )
-  })
-})
-
-describe('findMark', () => {
-  test('returns found mark', () => {
-    const markToFind: LinkMark = {
-      type: 'link',
-      attrs: { href: 'https://google.com' },
-    }
-    const data: DocumentNode = {
+describe('createFromDocument', () => {
+  test('creates NoteText with list of note ids in the document', () => {
+    const ids = [Identifier.generate(), Identifier.generate()]
+    const doc: DocumentNode = {
       type: 'doc',
       content: [
         {
           type: 'paragraph',
           content: [
-            { type: 'text', text: 'Hello ', marks: [] },
-            { type: 'text', text: 'Google', marks: [markToFind] },
+            { type: 'text', text: 'Beginning text, ' },
+            {
+              type: 'text',
+              text: 'linked text, ',
+              marks: [{ type: 'link', attrs: { noteId: ids[0].value } }],
+            },
+            {
+              type: 'text',
+              text: 'another link, ',
+              marks: [{ type: 'link', attrs: { noteId: ids[1].value } }],
+            },
+            {
+              type: 'text',
+              text: 'web link',
+              marks: [{ type: 'link', attrs: { href: 'https://google.com' } }],
+            },
+          ],
+        },
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'lineItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    {
+                      type: 'text',
+                      text: 'duplicate link',
+                      marks: [
+                        { type: 'link', attrs: { noteId: ids[0].value } },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
       ],
     }
-    const node = new NoteText(data)
-    expect(node.findMark((mark) => mark.type === 'link')).toEqual(markToFind)
+
+    const note = NoteText.createFromDocument(doc)
+    expect(note.document).toEqual(doc)
+    expect(note.links).toEqual(ids)
   })
 
-  test('returns undefined if no mark is found', () => {
-    const data: DocumentNode = {
+  test('creates NoteText with empty list of links if none are found', () => {
+    const doc: DocumentNode = {
       type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [{ type: 'text', text: 'Hello world', marks: [] }],
-        },
-      ],
+      content: [{ type: 'paragraph', content: [] }],
     }
-    const node = new NoteText(data)
-    expect(node.findMark((mark) => mark.type === 'bold')).toEqual(undefined)
+    const note = NoteText.createFromDocument(doc)
+    expect(note.document).toEqual(doc)
+    expect(note.links).toEqual([])
   })
 })
