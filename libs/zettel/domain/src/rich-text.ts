@@ -58,18 +58,18 @@ export interface HeadingNode {
   }
 }
 
-export interface LineItemNode {
-  type: 'lineItem'
+export interface ListItem {
+  type: 'listItem'
   content: BlockNode[]
 }
 
 export interface BulletListNode {
   type: 'bulletList'
-  content: LineItemNode[]
+  content: ListItem[]
 }
 export interface OrderedListNode {
   type: 'orderedList'
-  content: LineItemNode[]
+  content: ListItem[]
 }
 
 export type BlockNode =
@@ -85,7 +85,7 @@ export interface DocumentNode {
   content: BlockNode[]
 }
 
-export type Node = BlockNode | InlineNode | LineItemNode | DocumentNode
+export type Node = BlockNode | InlineNode | ListItem | DocumentNode
 
 export function isMarkType<MarkType extends Mark>(
   mark: Mark,

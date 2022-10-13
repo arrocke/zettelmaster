@@ -1,1 +1,1 @@
-export * from './lib/zettel-api'
+export { default as routes } from './routes'

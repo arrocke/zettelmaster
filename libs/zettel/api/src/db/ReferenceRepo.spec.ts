@@ -1,28 +1,11 @@
 import { Identifier } from '@zettelmaster/ddd'
 import { Reference } from '@zettelmaster/zettel/domain'
 import { ObjectId } from 'mongodb'
-import mongoose from 'mongoose'
 import ReferenceRepo from './ReferenceRepo'
 import ReferenceModel from './Reference'
+import '../../test/connect-db'
 
 const repo = new ReferenceRepo()
-
-beforeAll(async () => {
-  await mongoose.connect(
-    'mongodb+srv://test:asdf@zettelcluster.iktudug.mongodb.net?retryWrites=true&w=majority',
-    { dbName: `jest-${process.env.JEST_WORKER_ID}` }
-  )
-})
-
-afterAll(async () => {
-  await mongoose.disconnect()
-})
-
-beforeEach(async () => {
-  for await (const collection of mongoose.connection.db.listCollections()) {
-    await mongoose.connection.dropCollection(collection.name)
-  }
-})
 
 describe('findById', () => {
   test('returns a Reference for a found document', async () => {
