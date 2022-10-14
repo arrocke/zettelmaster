@@ -1,16 +1,8 @@
-import express, { RequestHandler } from 'express'
-import createNote from './routes/create-note'
+import express from 'express'
+import CreateNoteRoute from './routes/create-note'
 
-const routes = express.Router()
+const router = express.Router()
 
-function initRoute(route: {
-  method: 'get' | 'post' | 'patch' | 'put' | 'delete'
-  path: string
-  handler: RequestHandler
-}) {
-  routes[route.method](route.path, route.handler)
-}
+new CreateNoteRoute().register(router)
 
-initRoute(createNote)
-
-export default routes
+export default router

@@ -3,7 +3,7 @@ import agent from '../../test/agent'
 import '../../test/connect-db'
 import NoteModel from '../db/Note'
 
-test('returns 422 if body is empty', async () => {
+test('returns 400 if body is empty', async () => {
   const { body, status } = await agent.post('/notes')
 
   expect({ body, status }).toEqual({
@@ -15,7 +15,7 @@ test('returns 422 if body is empty', async () => {
         },
       ],
     },
-    status: 422,
+    status: 400,
   })
 })
 

@@ -1,41 +1,50 @@
-import { Request, Response } from 'express'
 import { DocumentNode, Note, NoteText } from '@zettelmaster/zettel/domain'
 import { z } from 'zod'
 import richTextSchema from '../rich-test-schema'
 import { noteRepo } from '../db'
+import {
+  HTTPMethod,
+  Route,
+  RouteRequest,
+  RouteResponse,
+  StatusCode,
+} from '@zettelmaster/ddd'
 
 interface CreateNoteBody {
   text: DocumentNode
 }
 
-const createNoteBodySchema: z.ZodType<CreateNoteBody> = z.object({
-  text: richTextSchema,
-})
+export default class CreateNoteRoute extends Route<
+  void,
+  unknown,
+  CreateNoteBody,
+  unknown
+> {
+  method = HTTPMethod.Put
+  path = '/notes'
 
-export default {
-  method: 'post' as const,
-  path: '/notes',
-  handler: async (req: Request, res: Response) => {
-    const parseResult = createNoteBodySchema.safeParse(req.body)
-    if (!parseResult.success) {
-      res.status(422).json({
-        errors: [
-          {
-            code: 'InvalidRequest',
-            message: 'could not understand request',
-          },
-        ],
-      })
-      return
-    }
-    const body = parseResult.data
-
+  async executeImpl({
+    body,
+  }: RouteRequest<unknown, CreateNoteBody, unknown>): Promise<
+    RouteResponse<void>
+  > {
     const note = Note.create({
       text: NoteText.createFromDocument(body.text),
     })
 
     await noteRepo.commit(note)
 
-    res.set('location', `/notes/${note.id.value}`).status(201).end()
-  },
+    return {
+      statusCode: StatusCode.Created,
+      headers: {
+        location: `/notes/${note.id.value}`,
+      },
+    }
+  }
+
+  bodySchema = z.object({
+    text: richTextSchema,
+  })
+  paramsSchema = z.object({})
+  querySchema = z.object({})
 }

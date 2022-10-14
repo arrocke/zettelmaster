@@ -6,3 +6,6 @@ export * from './ValueObject'
 
 export { default as Entity } from './Entity'
 export * from './Entity'
+
+export { default as Route } from './Route'
+export * from './Route'
