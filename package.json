@@ -21,6 +21,7 @@
     "zod": "3.19.1"
   },
   "devDependencies": {
+    "@jest-mock/express": "2.0.1",
     "@nrwl/cli": "14.8.3",
     "@nrwl/cypress": "14.8.3",
     "@nrwl/eslint-plugin-nx": "14.8.3",

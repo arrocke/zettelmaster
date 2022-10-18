@@ -88,6 +88,8 @@ export default abstract class Route<
             },
           ],
         })
+      } else {
+        throw error
       }
     }
   }
