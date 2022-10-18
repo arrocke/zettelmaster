@@ -53,12 +53,16 @@ export default abstract class Route<
   Body = unknown,
   Query = unknown
 > {
+  constructor() {
+    this.execute = this.execute.bind(this)
+  }
+
   /**
    * Execute the route as express middleware.
    * @param req Request from express middleware.
    * @param res Response from express middleware.
    */
-  async execute(req: express.Request, res: express.Response) {
+  async execute(req: express.Request, res: express.Response): Promise<void> {
     try {
       const { body, query, params } = this.validateRequest(req)
 
@@ -99,7 +103,7 @@ export default abstract class Route<
    * @param router The express router or application to register the route with.
    */
   register(router: express.IRouter) {
-    router[this.method](this.path, this.execute.bind(this))
+    router[this.method](this.path, this.execute)
   }
 
   /** The HTTP method of the route. */

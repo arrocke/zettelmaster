@@ -1,4 +1,5 @@
 import Route, { HTTPMethod, RouteRequest, RouteResponse, StatusCode } from './Route'
+import { IRouter } from 'express'
 import { getMockReq, getMockRes } from '@jest-mock/express'
 import * as z from 'zod'
 
@@ -26,7 +27,7 @@ describe('execute', () => {
     })
     const { res } = getMockRes()
 
-    new TestRoute().execute(req, res)
+    await new TestRoute().execute(req, res)
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith({
       errors: [
@@ -62,7 +63,7 @@ describe('execute', () => {
     })
     const { res } = getMockRes()
 
-    new TestRoute().execute(req, res)
+    await new TestRoute().execute(req, res)
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith({
       errors: [
@@ -98,7 +99,7 @@ describe('execute', () => {
     })
     const { res } = getMockRes()
 
-    new TestRoute().execute(req, res)
+    await new TestRoute().execute(req, res)
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith({
       errors: [
@@ -110,10 +111,100 @@ describe('execute', () => {
     })
   })
 
-  test.todo('returns response with body')
-  test.todo('returns response with headers')
+  test('returns response with body', async () => {
+    class TestRoute extends Route<
+      { val: string }
+    > {
+      method = HTTPMethod.Post
+      path = '/path'
+
+      protected bodySchema = z.object({})
+      protected querySchema = z.object({})
+      protected paramsSchema = z.object({})
+
+      protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<{ val: string }>> {
+        return Promise.resolve({
+          body: { val: 'hello' },
+          statusCode: StatusCode.Ok
+        })
+      }
+    }
+
+    const req = getMockReq({
+      body: {},
+      query: {},
+      params: {}
+    })
+    const { res } = getMockRes()
+
+    await new TestRoute().execute(req, res)
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith({ val: 'hello' })
+  })
+
+  test('returns response with headers', async () => {
+    class TestRoute extends Route {
+      method = HTTPMethod.Post
+      path = '/path'
+
+      protected bodySchema = z.object({})
+      protected querySchema = z.object({})
+      protected paramsSchema = z.object({})
+
+      protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<void>> {
+        return Promise.resolve({
+          statusCode: StatusCode.Created,
+          headers: {
+            location: '/path/1234'
+          }
+        })
+      }
+    }
+
+    const req = getMockReq({
+      body: {},
+      query: {},
+      params: {}
+    })
+    const { res } = getMockRes()
+
+    await new TestRoute().execute(req, res)
+    expect(res.set).toHaveBeenCalledWith({
+      location: '/path/1234'
+    })
+    expect(res.status).toHaveBeenCalledWith(201)
+    expect(res.json).not.toHaveBeenCalled()
+    expect(res.send).toHaveBeenCalled()
+  })
 })
 
 describe('register', () => {
-  test.todo('registers as middleware in express router')
+  test('registers as middleware in express router', async () => {
+    class TestRoute extends Route<
+      { val: string }
+    > {
+      method = HTTPMethod.Get
+      path = '/path'
+
+      protected bodySchema = z.object({})
+      protected querySchema = z.object({})
+      protected paramsSchema = z.object({})
+
+      protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<{ val: string }>> {
+        return Promise.resolve({
+          body: { val: 'hello' },
+          statusCode: StatusCode.Ok
+        })
+      }
+    }
+
+    const routerMock = {
+      get: jest.fn()
+    } as unknown as IRouter
+
+    const route = new TestRoute()
+    route.register(routerMock)
+
+    expect(routerMock[route.method]).toHaveBeenCalledWith(route.path, route.execute)
+  })
 })
