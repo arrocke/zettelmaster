@@ -2,8 +2,7 @@ import mongoose from 'mongoose'
 
 beforeAll(async () => {
   await mongoose.connect(
-    'mongodb+srv://test:asdf@zettelcluster.iktudug.mongodb.net?retryWrites=true&w=majority',
-    { dbName: `jest-${process.env.JEST_WORKER_ID}` }
+    `mongodb://127.0.0.1:27017/jest-${process.env.JEST_WORKER_ID}`
   )
 })
 

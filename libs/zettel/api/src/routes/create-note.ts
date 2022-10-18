@@ -20,7 +20,7 @@ export default class CreateNoteRoute extends Route<
   CreateNoteBody,
   unknown
 > {
-  method = HTTPMethod.Put
+  method = HTTPMethod.Post
   path = '/notes'
 
   async executeImpl({

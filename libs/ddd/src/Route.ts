@@ -30,17 +30,17 @@ export interface RouteRequest<Params, Body, Query> {
 
 export type RouteResponse<Body> = Body extends void
   ? {
-      headers?: { [key: string]: string }
-      statusCode: StatusCode
-    }
+    headers?: { [key: string]: string }
+    statusCode: StatusCode
+  }
   : {
-      body: Body
-      headers?: { [key: string]: string }
-      statusCode: StatusCode
-    }
+    body: Body
+    headers?: { [key: string]: string }
+    statusCode: StatusCode
+  }
 
 /** Occurs when validation on route body, query, or params fails. */
-class RouteValidationError extends Error {}
+class RouteValidationError extends Error { }
 
 /**
  * Base implementation of a HTTP route.
