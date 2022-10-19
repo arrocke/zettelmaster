@@ -9,3 +9,5 @@ export * from './Entity'
 
 export { default as Route } from './Route'
 export * from './Route'
+
+export * from './errors'

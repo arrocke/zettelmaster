@@ -5,10 +5,6 @@ interface EntityData {
   str?: string
 }
 class TestEntity extends Entity<EntityData> {
-  get id() {
-    return this._id
-  }
-
   get data() {
     return this._data
   }

@@ -1,5 +1,6 @@
 import express from 'express'
 import { z } from 'zod'
+import { NotFoundError } from './errors'
 
 export enum StatusCode {
   Ok = 200,
@@ -40,7 +41,23 @@ export type RouteResponse<Body> = Body extends void
   }
 
 /** Occurs when validation on route body, query, or params fails. */
-class RouteValidationError extends Error { }
+class InvalidRequestError extends Error {
+  constructor() {
+    super('could not understand request')
+  }
+}
+
+const statusCodeMap: Record<string, StatusCode> = {
+  [InvalidRequestError.name]: StatusCode.BadRequest,
+  [NotFoundError.name]: StatusCode.NotFound
+}
+
+function convertErrorToHttpError(error: Error) {
+  return {
+    code: error.constructor.name.replace(/Error$/, '') || 'Unknown',
+    message: error.message
+  }
+}
 
 /**
  * Base implementation of a HTTP route.
@@ -83,17 +100,12 @@ export default abstract class Route<
         res.send()
       }
     } catch (error) {
-      if (error instanceof RouteValidationError) {
-        res.status(StatusCode.BadRequest).json({
-          errors: [
-            {
-              code: 'InvalidRequest',
-              message: 'could not understand request',
-            },
-          ],
-        })
-      } else {
-        throw error
+      if (error instanceof Error) {
+        res
+          .status(statusCodeMap[error.constructor.name] ?? StatusCode.BadRequest)
+          .json({
+            errors: [convertErrorToHttpError(error)]
+          })
       }
     }
   }
@@ -134,25 +146,20 @@ export default abstract class Route<
     query: Query
     params: Params
   } {
-    const bodyResult = this.bodySchema.safeParse(req.body)
-    if (!bodyResult.success) {
-      throw new RouteValidationError()
-    }
+    try {
+      const body = this.bodySchema.parse(req.body)
 
-    const queryResult = this.querySchema.safeParse(req.query)
-    if (!queryResult.success) {
-      throw new RouteValidationError()
-    }
+      const query = this.querySchema.parse(req.query)
 
-    const paramsResult = this.paramsSchema.safeParse(req.params)
-    if (!paramsResult.success) {
-      throw new RouteValidationError()
-    }
+      const params = this.paramsSchema.parse(req.params)
 
-    return {
-      body: bodyResult.data,
-      query: queryResult.data,
-      params: paramsResult.data,
+      return { body, query, params }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new InvalidRequestError()
+      } else {
+        throw error
+      }
     }
   }
 }

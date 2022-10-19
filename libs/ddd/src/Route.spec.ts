@@ -1,6 +1,7 @@
 import Route, { HTTPMethod, RouteRequest, RouteResponse, StatusCode } from './Route'
 import { IRouter } from 'express'
 import { getMockReq, getMockRes } from '@jest-mock/express'
+import { NotFoundError } from './errors'
 import * as z from 'zod'
 
 describe('execute', () => {
@@ -106,6 +107,35 @@ describe('execute', () => {
         {
           code: 'InvalidRequest',
           message: 'could not understand request',
+        },
+      ],
+    })
+  })
+
+  test('returns 404 when a NotFoundError is thrown', async () => {
+    class TestRoute extends Route {
+      method = HTTPMethod.Post
+      path = '/path'
+
+      protected bodySchema = z.object({})
+      protected querySchema = z.object({})
+      protected paramsSchema = z.object({})
+
+      protected executeImpl(request: RouteRequest<unknown, unknown, unknown>): Promise<RouteResponse<void>> {
+        throw new NotFoundError('user')
+      }
+    }
+
+    const req = getMockReq()
+    const { res } = getMockRes()
+
+    await new TestRoute().execute(req, res)
+    expect(res.status).toHaveBeenCalledWith(404)
+    expect(res.json).toHaveBeenCalledWith({
+      errors: [
+        {
+          code: 'NotFound',
+          message: 'User not found.',
         },
       ],
     })

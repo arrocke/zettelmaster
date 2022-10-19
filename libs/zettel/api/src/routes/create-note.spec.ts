@@ -1,6 +1,6 @@
+import '../../test/connect-db'
 import { ObjectId } from 'mongodb'
 import agent from '../../test/agent'
-import '../../test/connect-db'
 import NoteModel from '../db/Note'
 
 test('returns 400 if body is empty', async () => {
