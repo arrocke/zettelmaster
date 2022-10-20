@@ -8,8 +8,8 @@ const markSchema: z.Schema<Mark> = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('link'),
     attrs: z.object({
-      href: z.string(),
-      noteId: z.string(),
+      href: z.string().optional(),
+      noteId: z.string().optional(),
     }),
   }),
 ])
@@ -17,7 +17,7 @@ const markSchema: z.Schema<Mark> = z.discriminatedUnion('type', [
 const textNodeSchema = z.object({
   type: z.literal('text'),
   text: z.string(),
-  marks: z.array(markSchema),
+  marks: z.array(markSchema).optional(),
 })
 
 const imageNodeSchema = z.object({
@@ -34,7 +34,7 @@ const referenceNodeSchema = z.object({
   attrs: z.object({
     id: z.string(),
   }),
-  content: z.array(textNodeSchema),
+  content: z.array(textNodeSchema).optional(),
 })
 
 const inlineNodeSchema = z.discriminatedUnion('type', [
@@ -45,17 +45,17 @@ const inlineNodeSchema = z.discriminatedUnion('type', [
 
 const paragraphNodeSchema = z.object({
   type: z.literal('paragraph'),
-  content: z.array(inlineNodeSchema),
+  content: z.array(inlineNodeSchema).optional(),
 })
 
 const codeBlockNodeSchema = z.object({
   type: z.literal('codeBlock'),
-  content: z.array(textNodeSchema),
+  content: z.array(textNodeSchema).optional(),
 })
 
 const headingNodeSchema = z.object({
   type: z.literal('heading'),
-  content: z.array(inlineNodeSchema),
+  content: z.array(inlineNodeSchema).optional(),
   attrs: z.object({
     level: z.number(),
   }),
@@ -74,27 +74,27 @@ const blockNodeSchema: z.ZodType<BlockNode> = z.lazy(() =>
 
 const blockquoteNodeSchema = z.object({
   type: z.literal('blockquote'),
-  content: z.array(blockNodeSchema),
+  content: z.array(blockNodeSchema).optional(),
 })
 
 const listItemNodeSchema = z.object({
   type: z.literal('listItem'),
-  content: z.array(blockNodeSchema),
+  content: z.array(blockNodeSchema).optional(),
 })
 
 const bulletListNodeSchema = z.object({
   type: z.literal('bulletList'),
-  content: z.array(listItemNodeSchema),
+  content: z.array(listItemNodeSchema).optional(),
 })
 
 const orderedListNodeSchema = z.object({
   type: z.literal('orderedList'),
-  content: z.array(listItemNodeSchema),
+  content: z.array(listItemNodeSchema).optional(),
 })
 
 const documentNodeSchema: z.ZodType<DocumentNode> = z.object({
   type: z.literal('doc'),
-  content: z.array(blockNodeSchema),
+  content: z.array(blockNodeSchema).optional(),
 })
 
 export default documentNodeSchema

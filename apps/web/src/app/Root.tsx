@@ -5,8 +5,7 @@ export const Root = () => {
   const navigate = useNavigate()
   const createNote = useMutation(async () => {
     const res = await fetch('/api/notes', {
-      method: 'post',
-
+      method: 'POST'
     })
     return res.headers.get('location')!.split('/').slice(-1)[0]
   }, {
@@ -17,12 +16,14 @@ export const Root = () => {
 
   return (
     <>
-      <button
-        disabled={createNote.isLoading}
-        onClick={() => createNote.mutate()}
-      >
-        Create Note
-      </button>
+      <div>
+        <button
+          disabled={createNote.isLoading}
+          onClick={() => createNote.mutate()}
+        >
+          Create Note
+        </button>
+      </div>
       <Outlet />
     </>
   )

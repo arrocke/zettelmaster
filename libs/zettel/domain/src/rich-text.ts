@@ -34,25 +34,25 @@ export interface ReferenceNode {
   attrs: {
     id: string
   }
-  content: TextNode[]
+  content?: TextNode[]
 }
 export type InlineNode = TextNode | ImageNode | ReferenceNode
 
 export interface ParagraphNode {
   type: 'paragraph'
-  content: InlineNode[]
+  content?: InlineNode[]
 }
 export interface BlockquoteNode {
   type: 'blockquote'
-  content: BlockNode[]
+  content?: BlockNode[]
 }
 export interface CodeBlockNode {
   type: 'codeBlock'
-  content: TextNode[]
+  content?: TextNode[]
 }
 export interface HeadingNode {
   type: 'heading'
-  content: InlineNode[]
+  content?: InlineNode[]
   attrs: {
     level: number
   }
@@ -60,16 +60,16 @@ export interface HeadingNode {
 
 export interface ListItem {
   type: 'listItem'
-  content: BlockNode[]
+  content?: BlockNode[]
 }
 
 export interface BulletListNode {
   type: 'bulletList'
-  content: ListItem[]
+  content?: ListItem[]
 }
 export interface OrderedListNode {
   type: 'orderedList'
-  content: ListItem[]
+  content?: ListItem[]
 }
 
 export type BlockNode =
@@ -82,7 +82,7 @@ export type BlockNode =
 
 export interface DocumentNode {
   type: 'doc'
-  content: BlockNode[]
+  content?: BlockNode[]
 }
 
 export type Node = BlockNode | InlineNode | ListItem | DocumentNode
@@ -107,7 +107,7 @@ export function findNode(
 ): Node | undefined {
   if (fn(node)) return node
   else if ('content' in node) {
-    for (const child of node.content) {
+    for (const child of node.content ?? []) {
       const nestedResult = findNode(child, fn)
       if (nestedResult) {
         return nestedResult
@@ -121,7 +121,7 @@ export function filterNodes(node: Node, fn: (node: Node) => boolean): Node[] {
   let nodes: Node[] = []
   if (fn(node)) nodes.push(node)
   if ('content' in node)
-    nodes = nodes.concat(...node.content.map((child) => filterNodes(child, fn)))
+    nodes = nodes.concat(...(node.content ?? []).map((child) => filterNodes(child, fn)))
   return nodes
 }
 
@@ -135,7 +135,7 @@ export function findMark(
     }
   }
   if ('content' in node) {
-    for (const child of node.content) {
+    for (const child of node.content ?? []) {
       const nestedResult = findMark(child, fn)
       if (nestedResult) {
         return nestedResult
@@ -149,6 +149,6 @@ export function filterMarks(node: Node, fn: (node: Mark) => boolean): Mark[] {
   let nodes: Mark[] = []
   if ('marks' in node && node.marks) nodes = nodes.concat(node.marks.filter(fn))
   if ('content' in node)
-    nodes = nodes.concat(...node.content.map((child) => filterMarks(child, fn)))
+    nodes = nodes.concat(...(node.content ?? []).map((child) => filterMarks(child, fn)))
   return nodes
 }
