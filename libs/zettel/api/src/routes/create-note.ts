@@ -11,7 +11,7 @@ import {
 } from '@zettelmaster/ddd'
 
 interface CreateNoteBody {
-  text: DocumentNode
+  text?: DocumentNode
 }
 
 export default class CreateNoteRoute extends Route<
@@ -29,7 +29,7 @@ export default class CreateNoteRoute extends Route<
     RouteResponse<void>
   > {
     const note = Note.create({
-      text: NoteText.createFromDocument(body.text),
+      text: body.text ? NoteText.createFromDocument(body.text) : NoteText.createEmpty(),
     })
 
     await noteRepo.commit(note)
@@ -43,7 +43,7 @@ export default class CreateNoteRoute extends Route<
   }
 
   bodySchema = z.object({
-    text: richTextSchema,
+    text: richTextSchema.optional(),
   })
   paramsSchema = z.object({})
   querySchema = z.object({})

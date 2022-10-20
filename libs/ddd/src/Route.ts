@@ -147,11 +147,11 @@ export default abstract class Route<
     params: Params
   } {
     try {
-      const body = this.bodySchema.parse(req.body)
+      const body = this.bodySchema.parse(req.body ?? {})
 
-      const query = this.querySchema.parse(req.query)
+      const query = this.querySchema.parse(req.query ?? {})
 
-      const params = this.paramsSchema.parse(req.params)
+      const params = this.paramsSchema.parse(req.params ?? {})
 
       return { body, query, params }
     } catch (error) {

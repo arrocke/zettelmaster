@@ -58,4 +58,14 @@ export default class NoteText extends ValueObject<NoteTextData> {
     const references = findReferences(doc)
     return new NoteText({ document: doc, links, references })
   }
+
+  /** Creates an empty NoteText. */
+  static createEmpty(): NoteText {
+    return this.createFromDocument({
+      type: 'doc',
+      content: [
+        { type: 'paragraph', content: [] }
+      ]
+    })
+  }
 }
