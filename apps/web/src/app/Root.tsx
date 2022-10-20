@@ -15,8 +15,8 @@ export const Root = () => {
   })
 
   return (
-    <>
-      <div>
+    <div className="h-screen w-screen flex flex-col">
+      <div className="flex-none">
         <button
           disabled={createNote.isLoading}
           onClick={() => createNote.mutate()}
@@ -24,8 +24,10 @@ export const Root = () => {
           Create Note
         </button>
       </div>
-      <Outlet />
-    </>
+      <div className="flex-1">
+        <Outlet />
+      </div>
+    </div>
   )
 }
 
