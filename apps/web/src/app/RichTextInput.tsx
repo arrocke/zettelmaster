@@ -42,10 +42,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
 
 
   return (
-    <div className={`
-      pl-8
-      ${className}
-    `}>
+    <div className={className}>
       <EditorContent className="h-full" editor={editor} />
       {editor && (
         <BubbleMenu
