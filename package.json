@@ -42,6 +42,7 @@
     "@tiptap/extension-placeholder": "2.0.0-beta.199",
     "@tiptap/react": "2.0.0-beta.199",
     "@tiptap/starter-kit": "2.0.0-beta.199",
+    "@tiptap/suggestion": "2.0.0-beta.199",
     "@types/deep-equal": "1.0.1",
     "@types/express": "4.17.13",
     "@types/jest": "28.1.1",

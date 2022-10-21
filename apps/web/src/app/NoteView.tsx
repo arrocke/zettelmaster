@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import RichTextInput from './RichTextInput'
+import RichTextInput from './editor/RichTextInput'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { throttle } from 'lodash'
 

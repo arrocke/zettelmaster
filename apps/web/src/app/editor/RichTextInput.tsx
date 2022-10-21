@@ -2,7 +2,8 @@ import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect } from 'react'
-import { Icon } from './Icon'
+import { Icon } from '../Icon'
+import NoteLink from './NoteLink'
 
 export interface RichTextInputProps {
   text: any
@@ -15,6 +16,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
     content: text,
     extensions: [
       StarterKit,
+      NoteLink,
       Placeholder.configure({
         placeholder: ({ node, pos, editor }) => {
           return node.type.name === 'paragraph' && pos === 0 && !editor.isFocused ? 'Click to start typing' : ''
