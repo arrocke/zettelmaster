@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import RichTextInput from './RichTextInput'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { throttle } from 'lodash'
 
 export const NoteView = () => {
@@ -12,21 +12,38 @@ export const NoteView = () => {
     return res.json()
   })
 
-  const { mutate, isLoading } = useMutation((data: any) =>
-    fetch(`/api/notes/${data.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: data.text
-      })
-    }), {
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries(['note', variables.id])
+  const { mutate, isLoading } = useMutation(
+    (data: any) =>
+      fetch(`/api/notes/${data.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: data.text
+        })
+      }),
+    {
+      onSuccess: (_, variables) => {
+        queryClient.invalidateQueries(['note', variables.id])
+      }
     }
-  }
   )
+
+  const [isSaving, setSaving] = useState(false)
+  const timeoutId = useRef<NodeJS.Timeout | undefined>()
+  useEffect(() => {
+    if (isSaving !== isLoading) {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current)
+      }
+      if (isLoading) {
+        setSaving(true)
+      } else {
+        timeoutId.current = setTimeout(() => setSaving(false), 2000)
+      }
+    }
+  }, [isLoading, isSaving])
 
   const throttledMutate = useMemo(() => throttle(mutate, 5000, {
     trailing: true,
@@ -40,8 +57,7 @@ export const NoteView = () => {
   if (data) {
     return <div className="h-full flex flex-col">
       <div className="flex-none">
-        <span>{data.id}</span>
-        <span>{isLoading ? 'Saving...' : 'Saved'}</span>
+        <span>{isSaving ? 'Saving...' : 'Saved'}</span>
       </div>
       <hr />
       <RichTextInput className="flex-1" text={data.text} onTextChange={onTextChange} />
