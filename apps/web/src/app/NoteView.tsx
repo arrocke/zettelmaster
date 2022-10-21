@@ -43,6 +43,7 @@ export const NoteView = () => {
         <span>{data.id}</span>
         <span>{isLoading ? 'Saving...' : 'Saved'}</span>
       </div>
+      <hr />
       <RichTextInput className="flex-1" text={data.text} onTextChange={onTextChange} />
     </div>
   } else {
