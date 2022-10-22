@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 
+.ProseMirror a {
+  @apply underline cursor-pointer;
+}
+
 .ProseMirror p {
   @apply mt-2;
 }

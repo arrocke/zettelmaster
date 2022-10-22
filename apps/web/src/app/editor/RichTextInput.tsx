@@ -1,9 +1,10 @@
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect } from 'react'
-import { Icon } from '../Icon'
+import { useNavigate } from 'react-router-dom'
 import NoteLink from './NoteLink'
+import RichTextMenu from './RichTextMenu'
 
 export interface RichTextInputProps {
   text: any
@@ -12,11 +13,17 @@ export interface RichTextInputProps {
 }
 
 const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProps) => {
+  const navigate = useNavigate()
+
   const editor = useEditor({
     content: text,
     extensions: [
       StarterKit,
-      NoteLink,
+      NoteLink.configure({
+        onClick(href) {
+          navigate(href)
+        }
+      }),
       Placeholder.configure({
         placeholder: ({ node, pos, editor }) => {
           return node.type.name === 'paragraph' && pos === 0 && !editor.isFocused ? 'Click to start typing' : ''
@@ -46,61 +53,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
   return (
     <div className={className}>
       <EditorContent className="h-full" editor={editor} />
-      {editor && (
-        <BubbleMenu
-          className="bg-white rounded-lg border border-slate-300 text-slate-700 drop-shadow-md"
-          editor={editor}
-        >
-          <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`
-              w-8 h-8 rounded-l-lg
-              focus:bg-slate-300 hover:bg-slate-300
-              ${editor.isActive('bold') ? 'text-blue-500' : ''}
-            `}
-            tabIndex={-1}
-          >
-            <Icon type="bold" />
-            <span className="sr-only">Bold</span>
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`
-              w-8 h-8
-              focus:bg-slate-300 hover:bg-slate-300
-              ${editor.isActive('italic') ? 'text-blue-500' : ''}
-            `}
-            tabIndex={-1}
-          >
-            <Icon type="italic" />
-            <span className="sr-only">Italic</span>
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            className={`
-              w-8 h-8
-              focus:bg-slate-300 hover:bg-slate-300
-              ${editor.isActive('strike') ? 'text-blue-500' : ''}
-            `}
-            tabIndex={-1}
-          >
-            <Icon type="strike" />
-            <span className="sr-only">Strikethrough</span>
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleCode().run()}
-            className={`
-              w-8 h-8 rounded-r-lg
-              focus:bg-slate-300 hover:bg-slate-300
-              ${editor.isActive('strike') ? 'text-blue-500' : ''}
-            `}
-            tabIndex={-1}
-          >
-            <Icon type="code" />
-            <span className="sr-only">Code</span>
-          </button>
-        </BubbleMenu>
-      )}
+      {editor && <RichTextMenu editor={editor} />}
     </div>
   )
 }

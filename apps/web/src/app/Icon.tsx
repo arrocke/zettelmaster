@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBold, faItalic, faListUl, faListOl, faAdd, faStrikethrough, faCode } from '@fortawesome/free-solid-svg-icons'
+import { faBold, faItalic, faListUl, faListOl, faAdd, faStrikethrough, faCode, faNoteSticky, faClose, faCheck } from '@fortawesome/free-solid-svg-icons'
 
 const icons = {
   bold: faBold,
@@ -8,7 +8,10 @@ const icons = {
   'ordered-list': faListOl,
   'add': faAdd,
   'strike': faStrikethrough,
-  'code': faCode
+  'code': faCode,
+  'note': faNoteSticky,
+  close: faClose,
+  check: faCheck
 }
 
 export interface IconProps {
@@ -18,5 +21,5 @@ export interface IconProps {
 
 
 export const Icon = (props: IconProps) => {
-  return <FontAwesomeIcon className={props.className ?? ''} icon={icons[props.type]} aria-hidden="false" />
+  return <FontAwesomeIcon className={props.className ?? ''} icon={icons[props.type]} aria-hidden="true" />
 }
