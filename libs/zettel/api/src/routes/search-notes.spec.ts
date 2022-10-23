@@ -1,24 +1,12 @@
 import '../../test/connect-db'
-import { ObjectId } from 'mongodb'
 import agent from '../../test/agent'
 import NoteModel from '../db/Note'
 
-test('returns 200 with notes', async () => {
-  const { body, status } = await agent.get(`/notes/${new ObjectId().toHexString()}`)
-  expect({ body, status }).toEqual({
-    status: 404,
-    body: {
-      errors: [
-        {
-          code: 'NotFound',
-          message: "Note not found."
-        }
-      ]
-    }
-  })
+beforeEach(async () => {
+  await NoteModel.ensureIndexes()
 })
 
-test('returns 200 with the note', async () => {
+test('returns 200 with the notes', async () => {
   const notes = await NoteModel.create([{
     text: {
       type: 'doc',
@@ -26,7 +14,8 @@ test('returns 200 with the note', async () => {
         type: 'paragraph',
         content: [{ type: 'text', text: 'first' }]
       }]
-    }
+    },
+    searchString: 'first'
   },
   {
     text: {
@@ -35,7 +24,8 @@ test('returns 200 with the note', async () => {
         type: 'paragraph',
         content: [{ type: 'text', text: 'two' }]
       }]
-    }
+    },
+    searchString: 'two'
   }
   ])
 
@@ -45,7 +35,43 @@ test('returns 200 with the note', async () => {
     body: {
       data: notes.map(note => ({
         id: note._id.toHexString(),
+        preview: note.searchString
       }))
+    }
+  })
+})
+
+test('returns 200 with notes filtered by text', async () => {
+  const notes = await NoteModel.create([{
+    text: {
+      type: 'doc',
+      content: [{
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'first' }]
+      }]
+    },
+    searchString: 'first'
+  },
+  {
+    text: {
+      type: 'doc',
+      content: [{
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'two' }]
+      }]
+    },
+    searchString: 'two'
+  }
+  ])
+
+  const { body, status } = await agent.get('/notes').query({ text: 'two' })
+  expect({ body, status }).toEqual({
+    status: 200,
+    body: {
+      data: [{
+        id: notes[1]._id.toHexString(),
+        preview: notes[1].searchString
+      }]
     }
   })
 })
