@@ -25,6 +25,6 @@ const NoteSchema = new Schema({
   searchString: String
 })
 
-NoteSchema.index({ searchString: "text" })
+NoteSchema.index({ searchString: "text" }, { default_language: 'none' })
 
 export default model<DbNote>('Note', NoteSchema)

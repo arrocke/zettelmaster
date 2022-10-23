@@ -30,10 +30,10 @@ const NoteLinkSearch = ({ editor, onSelect }: NoteLinkSearchProps) => {
       }
     },
     async onInputValueChange({ inputValue }) {
-      const response = await fetch('/api/notes')
+      const response = await fetch(`/api/notes?text=${inputValue}`)
       if (response.status === 200) {
         const { data } = await response.json()
-        setItems(data.map((item: any) => ({ id: item.id, text: item.id })))
+        setItems(data.map((item: any) => ({ id: item.id, text: item.preview })))
       } else {
         setItems([])
       }
