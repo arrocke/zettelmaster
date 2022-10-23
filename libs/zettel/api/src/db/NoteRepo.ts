@@ -13,6 +13,7 @@ export default class NoteRepo {
           document: rawNote.text,
           links: rawNote.links.map((link) => new Identifier(link)),
           references: rawNote.references.map((link) => new Identifier(link)),
+          searchString: rawNote.searchString
         }),
       })
     }
@@ -27,6 +28,7 @@ export default class NoteRepo {
       references: noteText._data.references.map(
         (reference) => reference._value
       ),
+      searchString: noteText._data.searchString
     }
 
     await NoteModel.updateOne(

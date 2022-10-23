@@ -35,7 +35,10 @@ test('returns 204 and updates note', async () => {
       type: 'doc',
       content: [{
         type: 'paragraph',
-        content: []
+        content: [{
+          type: 'text',
+          text: 'asdf'
+        }]
       }]
     }
   }
@@ -52,6 +55,7 @@ test('returns 204 and updates note', async () => {
       __v: 0,
       links: [],
       references: [],
+      searchString: 'asdf'
     }
   })
 })

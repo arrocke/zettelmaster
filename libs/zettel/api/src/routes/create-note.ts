@@ -1,4 +1,5 @@
-import { DocumentNode, Note, NoteText } from '@zettelmaster/zettel/domain'
+import { DocumentNode } from '@zettelmaster/rich-text'
+import { Note, NoteText } from '@zettelmaster/zettel/domain'
 import { z } from 'zod'
 import richTextSchema from '../rich-test-schema'
 import { noteRepo } from '../db'

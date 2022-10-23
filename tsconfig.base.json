@@ -19,6 +19,7 @@
     "paths": {
       "@zettelmaster/api-interfaces": ["libs/api-interfaces/src/index.ts"],
       "@zettelmaster/ddd": ["libs/ddd/src/index.ts"],
+      "@zettelmaster/rich-text": ["libs/rich-text/src/index.ts"],
       "@zettelmaster/zettel/api": ["libs/zettel/api/src/index.ts"],
       "@zettelmaster/zettel/domain": ["libs/zettel/domain/src/index.ts"]
     }

@@ -1,13 +1,15 @@
 import {
-  findMark,
-  findNode,
-  filterNodes,
-  filterMarks,
   CodeBlockNode,
   DocumentNode,
   LinkMark,
   TextNode,
-} from './rich-text'
+} from './types'
+import {
+  findMark,
+  findNode,
+  filterNodes,
+  filterMarks,
+} from './search'
 
 describe('findNode', () => {
   test('returns found inline node', () => {
@@ -92,7 +94,7 @@ describe('filterNodes', () => {
           type: 'orderedList',
           content: [
             {
-              type: 'lineItem',
+              type: 'listItem',
               content: [
                 {
                   type: 'paragraph',
@@ -178,7 +180,7 @@ describe('filterMarks', () => {
           type: 'orderedList',
           content: [
             {
-              type: 'lineItem',
+              type: 'listItem',
               content: [
                 {
                   type: 'paragraph',

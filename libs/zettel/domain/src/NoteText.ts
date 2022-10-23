@@ -3,19 +3,19 @@ import {
   DocumentNode,
   filterMarks,
   filterNodes,
-  LinkMark,
+  isMarkType,
+  NoteLinkMark,
   ReferenceNode,
-} from './rich-text'
-
-export * from './rich-text'
+  toSearchString
+} from '@zettelmaster/rich-text'
 
 function findNoteLinks(document: DocumentNode): Identifier[] {
   const linkMarks = filterMarks(
     document,
-    (mark) => mark.type === 'link' && !!mark.attrs.noteId
-  ) as LinkMark[]
+    mark => isMarkType(mark, 'noteLink')
+  ) as NoteLinkMark[]
   return Array.from(
-    new Set(linkMarks.map((link) => link.attrs.noteId ?? ''))
+    new Set(linkMarks.map((link) => link.attrs.noteId))
   ).map((id) => new Identifier(id))
 }
 
@@ -33,6 +33,7 @@ export interface NoteTextData {
   document: DocumentNode
   links: Identifier[]
   references: Identifier[]
+  searchString: string
 }
 
 /** Represents rich text content for a note. */
@@ -52,11 +53,16 @@ export default class NoteText extends ValueObject<NoteTextData> {
     return this._data.references
   }
 
+  get searchString(): string {
+    return this._data.searchString
+  }
+
   /** Creates a new NoteText from a rich text document representation. */
   static createFromDocument(doc: DocumentNode): NoteText {
     const links = findNoteLinks(doc)
     const references = findReferences(doc)
-    return new NoteText({ document: doc, links, references })
+    const searchString = toSearchString(doc)
+    return new NoteText({ document: doc, links, references, searchString })
   }
 
   /** Creates an empty NoteText. */

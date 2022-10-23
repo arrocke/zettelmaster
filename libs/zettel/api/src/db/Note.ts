@@ -1,10 +1,11 @@
-import { DocumentNode } from '@zettelmaster/zettel/domain'
+import { DocumentNode } from '@zettelmaster/rich-text'
 import { model, Schema, Types } from 'mongoose'
 
 export interface DbNote {
   text: DocumentNode
   links: Types.ObjectId[]
   references: Types.ObjectId[]
+  searchString: string
 }
 
 const NoteSchema = new Schema({
@@ -21,6 +22,7 @@ const NoteSchema = new Schema({
       ref: 'Reference',
     },
   ],
+  searchString: String
 })
 
 export default model<DbNote>('Note', NoteSchema)

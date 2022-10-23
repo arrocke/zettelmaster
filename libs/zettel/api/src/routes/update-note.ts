@@ -8,7 +8,8 @@ import {
   RouteResponse,
   StatusCode,
 } from '@zettelmaster/ddd'
-import { DocumentNode, NoteText } from '@zettelmaster/zettel/domain'
+import { DocumentNode } from '@zettelmaster/rich-text'
+import { NoteText } from '@zettelmaster/zettel/domain'
 import { noteRepo } from '../db'
 
 export interface UpdateNoteRequestBody {

@@ -21,7 +21,7 @@ describe('findById', () => {
                 text: 'link',
                 marks: [
                   {
-                    type: 'link',
+                    type: 'noteLink',
                     attrs: { noteId: Identifier.generate().value },
                   },
                 ],
@@ -42,6 +42,7 @@ describe('findById', () => {
         text: note._data.text._data.document,
         links: note._data.text._data.links.map((link) => link._value),
         references: note._data.text._data.references.map((link) => link._value),
+        searchString: note._data.text._data.searchString
       },
     ])
     await expect(repo.findById(note.id.value)).resolves.toEqual(note)
@@ -69,7 +70,7 @@ describe('commit', () => {
                 text: 'link',
                 marks: [
                   {
-                    type: 'link',
+                    type: 'noteLink',
                     attrs: { noteId: Identifier.generate().value },
                   },
                 ],
@@ -93,6 +94,7 @@ describe('commit', () => {
       references: note._data.text._data.references.map(
         (reference) => reference._value
       ),
+      searchString: 'link',
       __v: 0,
     })
   })
@@ -110,7 +112,7 @@ describe('commit', () => {
                 text: 'link',
                 marks: [
                   {
-                    type: 'link',
+                    type: 'noteLink',
                     attrs: { noteId: Identifier.generate().value },
                   },
                 ],
@@ -142,6 +144,7 @@ describe('commit', () => {
       references: note._data.text._data.references.map(
         (reference) => reference._value
       ),
+      searchString: 'link',
       __v: 0,
     })
   })

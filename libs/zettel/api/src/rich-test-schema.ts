@@ -1,15 +1,21 @@
-import { BlockNode, DocumentNode, Mark } from '@zettelmaster/zettel/domain'
+import { BlockNode, DocumentNode, Mark } from '@zettelmaster/rich-text'
 import { z } from 'zod'
 
 const markSchema: z.Schema<Mark> = z.discriminatedUnion('type', [
   z.object({ type: z.literal('bold') }),
   z.object({ type: z.literal('italic') }),
   z.object({ type: z.literal('code') }),
+  z.object({ type: z.literal('strike') }),
   z.object({
     type: z.literal('link'),
     attrs: z.object({
-      href: z.string().optional(),
-      noteId: z.string().optional(),
+      href: z.string(),
+    }),
+  }),
+  z.object({
+    type: z.literal('noteLink'),
+    attrs: z.object({
+      noteId: z.string(),
     }),
   }),
 ])
@@ -18,6 +24,10 @@ const textNodeSchema = z.object({
   type: z.literal('text'),
   text: z.string(),
   marks: z.array(markSchema).optional(),
+})
+
+const hardBreakNodeSchema = z.object({
+  type: z.literal('hardBreak'),
 })
 
 const imageNodeSchema = z.object({
@@ -41,11 +51,16 @@ const inlineNodeSchema = z.discriminatedUnion('type', [
   textNodeSchema,
   imageNodeSchema,
   referenceNodeSchema,
+  hardBreakNodeSchema
 ])
 
 const paragraphNodeSchema = z.object({
   type: z.literal('paragraph'),
   content: z.array(inlineNodeSchema).optional(),
+})
+
+const horizontalRuleNodeSchema = z.object({
+  type: z.literal('horizontalRule'),
 })
 
 const codeBlockNodeSchema = z.object({
@@ -69,6 +84,7 @@ const blockNodeSchema: z.ZodType<BlockNode> = z.lazy(() =>
     blockquoteNodeSchema,
     bulletListNodeSchema,
     orderedListNodeSchema,
+    horizontalRuleNodeSchema
   ])
 )
 

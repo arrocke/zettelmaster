@@ -1,5 +1,6 @@
 import { Identifier } from '@zettelmaster/ddd'
-import NoteText, { DocumentNode } from './NoteText'
+import { DocumentNode } from '@zettelmaster/rich-text'
+import NoteText from './NoteText'
 
 describe('createFromDocument', () => {
   test('creates NoteText with list of links and reference ids in the document', () => {
@@ -15,12 +16,12 @@ describe('createFromDocument', () => {
             {
               type: 'text',
               text: 'linked text, ',
-              marks: [{ type: 'link', attrs: { noteId: linkIds[0].value } }],
+              marks: [{ type: 'noteLink', attrs: { noteId: linkIds[0].value } }],
             },
             {
               type: 'text',
               text: 'another link, ',
-              marks: [{ type: 'link', attrs: { noteId: linkIds[1].value } }],
+              marks: [{ type: 'noteLink', attrs: { noteId: linkIds[1].value } }],
             },
             {
               type: 'text',
@@ -38,7 +39,7 @@ describe('createFromDocument', () => {
           type: 'bulletList',
           content: [
             {
-              type: 'lineItem',
+              type: 'listItem',
               content: [
                 {
                   type: 'paragraph',
@@ -47,7 +48,7 @@ describe('createFromDocument', () => {
                       type: 'text',
                       text: 'duplicate link',
                       marks: [
-                        { type: 'link', attrs: { noteId: linkIds[0].value } },
+                        { type: 'noteLink', attrs: { noteId: linkIds[0].value } },
                       ],
                     },
                     {
@@ -68,6 +69,7 @@ describe('createFromDocument', () => {
     expect(note.document).toEqual(doc)
     expect(note.links).toEqual(linkIds)
     expect(note.references).toEqual(referenceIds)
+    expect(note.searchString).toEqual('Beginning text, linked text, another link, web link duplicate link')
   })
 
   test('creates NoteText with empty lists of links and references if none are found', () => {

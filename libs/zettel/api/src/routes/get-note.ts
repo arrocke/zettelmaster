@@ -7,7 +7,7 @@ import {
   RouteResponse,
   StatusCode,
 } from '@zettelmaster/ddd'
-import { DocumentNode } from '@zettelmaster/zettel/domain'
+import { DocumentNode } from '@zettelmaster/rich-text'
 import NoteModel from '../db/Note'
 
 export interface GetNoteResponseBody {

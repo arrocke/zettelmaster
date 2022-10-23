@@ -20,6 +20,10 @@ export default class Note extends Entity<NoteData> {
     return this._data.text.references
   }
 
+  get searchString() {
+    return this._data.text.searchString
+  }
+
   /** Creates a new Note with its text. */
   static create(data: NoteData): Note {
     return new Note(Identifier.generate(), data)

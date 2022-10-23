@@ -36,6 +36,7 @@ test('returns 201 and creates empty note', async () => {
       text: emptyText,
       links: [],
       references: [],
+      searchString: '',
       __v: 0,
     },
     headers: expect.objectContaining({
@@ -48,7 +49,13 @@ test('returns 201 and creates empty note', async () => {
 test('returns 201 and creates new note with text', async () => {
   const text = {
     type: 'doc',
-    content: [],
+    content: [{
+      type: 'paragraph',
+      content: [{
+        type: 'text',
+        text: 'asdf'
+      }]
+    }],
   }
   const { body, status, headers } = await agent.post('/notes').send({
     text,
@@ -64,6 +71,7 @@ test('returns 201 and creates new note with text', async () => {
       text,
       links: [],
       references: [],
+      searchString: "asdf",
       __v: 0,
     },
     headers: expect.objectContaining({

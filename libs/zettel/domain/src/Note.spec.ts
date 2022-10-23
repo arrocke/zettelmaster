@@ -1,6 +1,7 @@
 import { Identifier } from '@zettelmaster/ddd'
+import { DocumentNode } from '@zettelmaster/rich-text'
 import Note from './Note'
-import NoteText, { DocumentNode } from './NoteText'
+import NoteText from './NoteText'
 
 describe('create', () => {
   test('creates a new Note with a random id', () => {
@@ -9,14 +10,14 @@ describe('create', () => {
       content: [{ type: 'paragraph', content: [] }],
     }
     const note = Note.create({
-      text: new NoteText({ document: text, links: [], references: [] }),
+      text: new NoteText({ document: text, links: [], references: [], searchString: '' }),
     })
     expect(note.text).toEqual(text)
     expect(note.links).toEqual([])
     expect(
       note.equals(
         Note.create({
-          text: new NoteText({ document: text, links: [], references: [] }),
+          text: new NoteText({ document: text, links: [], references: [], searchString: '' }),
         })
       )
     ).toEqual(false)
@@ -33,6 +34,7 @@ describe('updateText', () => {
         },
         links: [],
         references: [],
+        searchString: ''
       }),
     })
     const linkIds = [Identifier.generate()]
@@ -46,7 +48,7 @@ describe('updateText', () => {
             {
               type: 'text',
               text: 'note link',
-              marks: [{ type: 'link', attrs: { noteId: linkIds[0].value } }],
+              marks: [{ type: 'noteLink', attrs: { noteId: linkIds[0].value } }],
             },
             {
               type: 'reference',
@@ -62,5 +64,6 @@ describe('updateText', () => {
     expect(note.text).toEqual(newDoc)
     expect(note.links).toEqual(linkIds)
     expect(note.references).toEqual(referenceIds)
+    expect(note.searchString).toEqual('note link')
   })
 })
