@@ -1,73 +1,69 @@
 import { useParams } from 'react-router-dom'
+import { DocumentNode } from '@zettelmaster/rich-text'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import RichTextInput from './editor/RichTextInput'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { throttle } from 'lodash'
 import useUnloadWarning from './useUnloadWarning'
 
+interface NoteData {
+  id: string,
+  text: DocumentNode
+}
+
 export const NoteView = () => {
-  const queryClient = useQueryClient()
   const { noteId } = useParams()
-  const { data } = useQuery(['note', noteId], async (key) => {
-    const res = await fetch(`/api/notes/${noteId}`)
-    return res.json()
+  const { data } = useQuery<NoteData>(['note', noteId], async (key) => {
+    if (noteId) {
+      const res = await fetch(`/api/notes/${noteId}`)
+      return res.json()
+    }
   })
 
+  const [hasChanges, setHasChanges] = useState(false)
+  const queryClient = useQueryClient()
   const { mutate, isLoading } = useMutation(
-    (data: any) =>
-      fetch(`/api/notes/${data.id}`, {
+    async (data: NoteData) => {
+      await fetch(`/api/notes/${data.id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          text: data.text
-        })
-      }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: data.text })
+      })
+    },
     {
-      onMutate: () => setHasChanges(false),
-      onError: () => setHasChanges(true),
       onSuccess: (_, variables) => {
         queryClient.invalidateQueries(['note', variables.id])
+        setHasChanges(false)
       }
     }
   )
 
-  const [hasChanges, setHasChanges] = useState(false)
-  const [isSaving, setSaving] = useState(false)
-  const timeoutId = useRef<NodeJS.Timeout | undefined>()
-  useEffect(() => {
-    if (isSaving !== isLoading) {
-      if (timeoutId.current) {
-        clearTimeout(timeoutId.current)
-      }
-      if (isLoading) {
-        setSaving(true)
-      } else {
-        timeoutId.current = setTimeout(() => setSaving(false), 2000)
-      }
-    }
-  }, [isLoading, isSaving])
-
+  // We don't want to save on every keystroke, so we throttle to once every 5 seconds.
   const throttledMutate = useMemo(() => throttle(mutate, 5000, {
     trailing: true,
     leading: false
   }), [mutate])
-
-  async function onTextChange(text: any) {
-    setHasChanges(true)
-    await throttledMutate({ id: noteId, text })
-  }
+  // When this page navigates away, we need to flush the throttled function so that the latest changes are saved.
+  useEffect(() => {
+    return () => throttledMutate.flush()
+  }, [throttledMutate])
 
   useUnloadWarning(hasChanges || isLoading)
 
   if (data) {
     return <div className="h-full flex flex-col">
       <div className="flex-none">
-        <span>{isSaving ? 'Saving...' : hasChanges ? 'Unsaved changes' : 'Saved'}</span>
+        <span>{hasChanges ? 'Unsaved changes' : 'Saved'}</span>
       </div>
       <hr />
-      <RichTextInput className="flex-1" text={data.text} onTextChange={onTextChange} />
+      <RichTextInput
+        className="flex-1"
+        text={data.text}
+        onTextChange={text => {
+          setHasChanges(true)
+          throttledMutate({ id: data.id, text })
+        }}
+      />
     </div>
   } else {
     return null
