@@ -22,7 +22,7 @@ export const NoteView = () => {
 
   const [hasChanges, setHasChanges] = useState(false)
   const queryClient = useQueryClient()
-  const { mutate, isLoading } = useMutation(
+  const { mutate, isLoading, reset } = useMutation(
     async (data: NoteData) => {
       await fetch(`/api/notes/${data.id}`, {
         method: 'PATCH',
@@ -31,9 +31,20 @@ export const NoteView = () => {
       })
     },
     {
-      onSuccess: (_, variables) => {
-        queryClient.invalidateQueries(['note', variables.id])
+      onMutate: async (note) => {
+        await queryClient.cancelQueries(['note', note.id])
+        const prevNote = queryClient.getQueryData<NoteData>(['note', note.id])
+        queryClient.setQueryData(['note', note.id], note)
+        return { prevNote }
+      },
+      onSuccess: (response, note) => {
         setHasChanges(false)
+      },
+      onError: (error, note, context) => {
+        queryClient.setQueryData(['note', note.id], context?.prevNote)
+      },
+      onSettled: (response, error, note) => {
+        queryClient.invalidateQueries(['note', note.id])
       }
     }
   )
@@ -43,10 +54,16 @@ export const NoteView = () => {
     trailing: true,
     leading: false
   }), [mutate])
-  // When this page navigates away, we need to flush the throttled function so that the latest changes are saved.
+  // When this page navigates away or to a new note,
+  // we need to flush the throttled function so that the latest changes are saved.
+  // and then reset the mutation state for the new page.
   useEffect(() => {
-    return () => throttledMutate.flush()
-  }, [throttledMutate])
+    return () => {
+      throttledMutate.flush()
+      reset()
+      setHasChanges(false)
+    }
+  }, [throttledMutate, reset, noteId])
 
   useUnloadWarning(hasChanges || isLoading)
 
