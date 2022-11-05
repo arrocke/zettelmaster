@@ -47,11 +47,11 @@ export default class UpdateNoteRoute extends Route<
     return { statusCode: StatusCode.NoContent }
   }
 
-  bodySchema = z.object({
+  parseBody = z.object({
     text: richTextSchema,
-  })
-  paramsSchema = z.object({ noteId: z.string() })
-  querySchema = z.object({})
+  }).parse
+  parseParams = z.object({ noteId: z.string() }).parse
+  parseQuery = z.object({}).parse
 }
 
 

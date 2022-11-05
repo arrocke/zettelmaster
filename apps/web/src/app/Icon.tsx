@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBold, faItalic, faListUl, faListOl, faAdd, faStrikethrough, faCode, faNoteSticky, faClose, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faBold, faItalic, faListUl, faListOl, faAdd, faStrikethrough, faCode, faNoteSticky, faClose, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 const icons = {
   bold: faBold,
@@ -11,7 +11,8 @@ const icons = {
   'code': faCode,
   'note': faNoteSticky,
   close: faClose,
-  check: faCheck
+  check: faCheck,
+  plus: faPlus
 }
 
 export interface IconProps {

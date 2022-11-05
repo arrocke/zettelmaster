@@ -21,6 +21,19 @@ export interface SearchNotesQuery {
   limit?: number
 }
 
+const parseQuery = z.object({
+  text: z.string().optional(),
+  limit: z.preprocess(
+    x => {
+      const result = z.string().optional().transform(Number).safeParse(x)
+      return result.success ? result.data : null
+    },
+    z.number().optional()
+  )
+})
+
+type x = z.infer<typeof parseQuery>
+
 export default class SearchNotesRoute extends Route<
   SearchNotesResponseBody,
   unknown,
@@ -52,11 +65,12 @@ export default class SearchNotesRoute extends Route<
     }
   }
 
-  bodySchema = z.object({})
-  paramsSchema = z.object({})
-  querySchema = z.object({
-    text: z.string().optional()
-  })
+  parseBody = z.object({}).parse
+  parseParams = z.object({}).parse
+  parseQuery = z.object({
+    text: z.string().optional(),
+    limit: z.string().regex(/^\d+$/).transform(Number).optional()
+  }).parse
 }
 
 

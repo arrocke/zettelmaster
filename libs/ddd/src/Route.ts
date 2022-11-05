@@ -134,11 +134,11 @@ export default abstract class Route<
   ): Promise<RouteResponse<Response>>
 
   /** Validation schema for the request body. */
-  protected abstract bodySchema: z.ZodType<Body>
+  protected abstract parseBody: (data: unknown) => Body
   /** Validation schema for the request query. */
-  protected abstract querySchema: z.ZodType<Query>
+  protected abstract parseQuery: (data: unknown) => Query
   /** Validation schema for the request params. */
-  protected abstract paramsSchema: z.ZodType<Params>
+  protected abstract parseParams: (data: unknown) => Params
 
   /** Validate the request to match the typescript types of the Route. */
   protected validateRequest(req: express.Request): {
@@ -147,9 +147,9 @@ export default abstract class Route<
     params: Params
   } {
     try {
-      const body = this.bodySchema.parse(req.body)
-      const query = this.querySchema.parse(req.query)
-      const params = this.paramsSchema.parse(req.params)
+      const body = this.parseBody(req.body)
+      const query = this.parseQuery(req.query)
+      const params = this.parseParams(req.params)
       return { body, query, params }
     } catch (error) {
       if (error instanceof z.ZodError) {

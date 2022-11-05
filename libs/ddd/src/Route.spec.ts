@@ -14,9 +14,9 @@ describe('execute', () => {
       method = HTTPMethod.Post
       path = '/path'
 
-      protected bodySchema = z.string()
-      protected querySchema = z.object({})
-      protected paramsSchema = z.object({})
+      protected parseBody = z.string().parse
+      protected parseQuery = z.object({}).parse
+      protected parseParams = z.object({}).parse
 
       protected executeImpl(request: RouteRequest<Record<string, string>, string, unknown>): Promise<RouteResponse<void>> {
         throw new Error('not implemented')
@@ -50,9 +50,9 @@ describe('execute', () => {
       method = HTTPMethod.Post
       path = '/path'
 
-      protected bodySchema = z.object({})
-      protected querySchema = z.object({ val: z.string() })
-      protected paramsSchema = z.object({})
+      protected parseBody = z.object({}).parse
+      protected parseQuery = z.object({ val: z.string() }).parse
+      protected parseParams = z.object({}).parse
 
       protected executeImpl(request: RouteRequest<Record<string, string>, unknown, { val: string }>): Promise<RouteResponse<void>> {
         throw new Error('not implemented')
@@ -84,11 +84,11 @@ describe('execute', () => {
       method = HTTPMethod.Post
       path = '/path'
 
-      protected bodySchema = z.object({})
-      protected querySchema = z.object({})
-      protected paramsSchema = z.object({
+      protected parseBody = z.object({}).parse
+      protected parseQuery = z.object({}).parse
+      protected parseParams = z.object({
         id: z.string()
-      })
+      }).parse
 
       protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<void>> {
         throw new Error('not implemented')
@@ -117,9 +117,9 @@ describe('execute', () => {
       method = HTTPMethod.Post
       path = '/path'
 
-      protected bodySchema = z.object({})
-      protected querySchema = z.object({})
-      protected paramsSchema = z.object({})
+      protected parseBody = z.object({}).parse
+      protected parseQuery = z.object({}).parse
+      protected parseParams = z.object({}).parse
 
       protected executeImpl(request: RouteRequest<unknown, unknown, unknown>): Promise<RouteResponse<void>> {
         throw new NotFoundError('user')
@@ -148,9 +148,9 @@ describe('execute', () => {
       method = HTTPMethod.Post
       path = '/path'
 
-      protected bodySchema = z.object({})
-      protected querySchema = z.object({})
-      protected paramsSchema = z.object({})
+      protected parseBody = z.object({}).parse
+      protected parseQuery = z.object({}).parse
+      protected parseParams = z.object({}).parse
 
       protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<{ val: string }>> {
         return Promise.resolve({
@@ -177,9 +177,9 @@ describe('execute', () => {
       method = HTTPMethod.Post
       path = '/path'
 
-      protected bodySchema = z.object({})
-      protected querySchema = z.object({})
-      protected paramsSchema = z.object({})
+      protected parseBody = z.object({}).parse
+      protected parseQuery = z.object({}).parse
+      protected parseParams = z.object({}).parse
 
       protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<void>> {
         return Promise.resolve({
@@ -216,9 +216,9 @@ describe('register', () => {
       method = HTTPMethod.Get
       path = '/path'
 
-      protected bodySchema = z.object({})
-      protected querySchema = z.object({})
-      protected paramsSchema = z.object({})
+      protected parseBody = z.object({}).parse
+      protected parseQuery = z.object({}).parse
+      protected parseParams = z.object({}).parse
 
       protected executeImpl(request: RouteRequest<{ id: string }, unknown, unknown>): Promise<RouteResponse<{ val: string }>> {
         return Promise.resolve({

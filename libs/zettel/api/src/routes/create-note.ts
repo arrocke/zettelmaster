@@ -43,9 +43,9 @@ export default class CreateNoteRoute extends Route<
     }
   }
 
-  bodySchema = z.object({
+  parseBody = z.object({
     text: richTextSchema.optional(),
-  })
-  paramsSchema = z.object({})
-  querySchema = z.object({})
+  }).parse
+  parseParams = z.object({}).parse
+  parseQuery = z.object({}).parse
 }

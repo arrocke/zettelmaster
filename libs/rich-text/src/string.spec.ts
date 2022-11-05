@@ -5,7 +5,7 @@ const doc: DocumentNode = {
   type: 'doc',
   content: [
     { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'heading text' }] },
-    { type: 'horiztonalRule' },
+    { type: 'horizontalRule' },
     {
       type: 'paragraph',
       content: [

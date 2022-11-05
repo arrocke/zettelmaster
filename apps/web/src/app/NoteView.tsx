@@ -13,9 +13,9 @@ interface NoteData {
 
 export const NoteView = () => {
   const { noteId } = useParams()
-  const { data } = useQuery<NoteData>(['note', noteId], async (key) => {
-    if (noteId) {
-      const res = await fetch(`/api/notes/${noteId}`)
+  const { data } = useQuery<NoteData, unknown, NoteData, ['note', string | undefined]>(['note', noteId], async (key) => {
+    if (key.queryKey[1]) {
+      const res = await fetch(`/api/notes/${key.queryKey[1]}`)
       return res.json()
     }
   })
@@ -69,10 +69,9 @@ export const NoteView = () => {
 
   if (data) {
     return <div className="h-full flex flex-col">
-      <div className="flex-none">
+      <div className="flex-none p-2 border-b border-b-slate-400">
         <span>{hasChanges ? 'Unsaved changes' : 'Saved'}</span>
       </div>
-      <hr />
       <RichTextInput
         className="flex-1"
         text={data.text}

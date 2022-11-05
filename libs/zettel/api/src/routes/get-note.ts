@@ -39,8 +39,8 @@ export default class GetNoteRoute extends Route<
     }
   }
 
-  bodySchema = z.object({})
-  paramsSchema = z.object({ noteId: z.string() })
-  querySchema = z.object({})
+  parseBody = z.object({}).parse
+  parseParams = z.object({ noteId: z.string() }).parse
+  parseQuery = z.object({}).parse
 }
 
