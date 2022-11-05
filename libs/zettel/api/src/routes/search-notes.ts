@@ -18,6 +18,7 @@ export interface SearchNotesResponseBody {
 
 export interface SearchNotesQuery {
   text?: string
+  limit?: number
 }
 
 export default class SearchNotesRoute extends Route<
@@ -38,7 +39,7 @@ export default class SearchNotesRoute extends Route<
       }
     }
 
-    const notes = await NoteModel.find(options, { _id: true, searchString: true })
+    const notes = await NoteModel.find(options, { _id: true, searchString: true }).limit(request.query.limit ?? 5)
 
     return {
       body: {

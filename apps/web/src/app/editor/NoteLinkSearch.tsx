@@ -1,5 +1,5 @@
 import { useCombobox } from 'downshift'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Editor } from '@tiptap/react'
 
 interface Item {
@@ -13,6 +13,24 @@ export interface NoteLinkSearchProps {
 }
 
 const NoteLinkSearch = ({ editor, onSelect }: NoteLinkSearchProps) => {
+  const fetchItems = useCallback(async (search?: string) => {
+    const url = new URL('/api/notes', window.location.href)
+    if (search) {
+      url.searchParams.append('text', search)
+    }
+    const response = await fetch(url.toString())
+    if (response.status === 200) {
+      const { data } = await response.json()
+      setItems(data.map((item: any) => ({ id: item.id, text: item.preview })))
+    } else {
+      setItems([])
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
+
   const [items, setItems] = useState<Item[]>([])
   const {
     getMenuProps,
@@ -30,13 +48,7 @@ const NoteLinkSearch = ({ editor, onSelect }: NoteLinkSearchProps) => {
       }
     },
     async onInputValueChange({ inputValue }) {
-      const response = await fetch(`/api/notes?text=${inputValue}`)
-      if (response.status === 200) {
-        const { data } = await response.json()
-        setItems(data.map((item: any) => ({ id: item.id, text: item.preview })))
-      } else {
-        setItems([])
-      }
+      await fetchItems(inputValue)
     },
     items,
     itemToString(item) {
@@ -63,7 +75,7 @@ const NoteLinkSearch = ({ editor, onSelect }: NoteLinkSearchProps) => {
         `}
         key={`${item.id}-${index}`}
       >
-        {item.text}
+        {item.text || 'Empty note'}
       </li>)}
     </ul>
   </div>
