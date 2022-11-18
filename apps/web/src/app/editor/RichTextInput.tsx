@@ -4,6 +4,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NoteLink from './NoteLink'
+import Reference from './Reference'
 import RichTextMenu from './RichTextMenu'
 
 export interface RichTextInputProps {
@@ -24,6 +25,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
           navigate(href)
         }
       }),
+      Reference.configure(),
       Placeholder.configure({
         placeholder: ({ node, pos, editor }) => {
           return node.type.name === 'paragraph' && pos === 0 && !editor.isFocused ? 'Click to start typing' : ''
