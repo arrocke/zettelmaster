@@ -41,7 +41,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
     },
     onUpdate({ editor }) {
       onTextChange?.(editor.getJSON())
-    },
+    }
   })
 
   useEffect(() => {

@@ -43,6 +43,7 @@ const referenceNodeSchema = z.object({
   type: z.literal('reference'),
   attrs: z.object({
     id: z.string(),
+    location: z.string().optional(),
   }),
   content: z.array(textNodeSchema).optional(),
 })

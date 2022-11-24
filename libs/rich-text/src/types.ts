@@ -44,8 +44,8 @@ export interface ReferenceNode {
   type: 'reference'
   attrs: {
     id: string
+    location?: string
   }
-  content?: TextNode[]
 }
 export type InlineNode = TextNode | ImageNode | ReferenceNode | HardBreak
 
