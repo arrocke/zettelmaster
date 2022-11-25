@@ -1,4 +1,5 @@
-import { mergeAttributes, Node } from '@tiptap/react'
+import { mergeAttributes, Node, ReactNodeViewRenderer } from '@tiptap/react'
+import ReferenceNodeView from './ReferenceNodeView'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -25,23 +26,18 @@ const NoteLink = Node.create({
     }
   },
 
+  addNodeView() {
+    return ReactNodeViewRenderer(ReferenceNodeView)
+  },
+
   parseHTML() {
     return [
-      { tag: 'span[data-type=reference]' },
+      { tag: 'reference' },
     ]
   },
 
-  renderHTML({ HTMLAttributes, node }) {
-    return [
-      'span',
-      mergeAttributes(
-        { 'data-type': 'reference' },
-        HTMLAttributes
-      ),
-      "[1, ",
-      ['span', node.attrs['location'] ?? ""],
-      "]"
-    ]
+  renderHTML({ HTMLAttributes }) {
+    return ['reference', mergeAttributes(HTMLAttributes)]
   },
 
   addCommands() {
