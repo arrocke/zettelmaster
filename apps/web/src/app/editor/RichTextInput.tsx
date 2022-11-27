@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import NoteLink from './NoteLink'
 import Reference from './Reference'
 import RichTextMenu from './RichTextMenu'
+import FloatingMenu from './FloatingMenu'
 
 export interface RichTextInputProps {
   text: any
@@ -56,6 +57,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
     <div className={className}>
       <EditorContent className="h-full" editor={editor} />
       {editor && <RichTextMenu editor={editor} />}
+      {editor && <FloatingMenu editor={editor} />}
     </div>
   )
 }

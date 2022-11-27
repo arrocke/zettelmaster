@@ -44,8 +44,7 @@ const referenceNodeSchema = z.object({
   attrs: z.object({
     id: z.string(),
     location: z.string().optional(),
-  }),
-  content: z.array(textNodeSchema).optional(),
+  })
 })
 
 const inlineNodeSchema = z.discriminatedUnion('type', [

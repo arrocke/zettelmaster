@@ -1,4 +1,5 @@
 import { mergeAttributes, Node, ReactNodeViewRenderer } from '@tiptap/react'
+import { PluginKey } from 'prosemirror-state'
 import ReferenceNodeView from './ReferenceNodeView'
 
 declare module '@tiptap/core' {
@@ -12,17 +13,25 @@ declare module '@tiptap/core' {
   }
 }
 
-const NoteLink = Node.create({
+export const ReferencePluginKey = new PluginKey('reference')
+
+const Reference = Node.create<any, { openReferenceSearch?(): void }>({
   name: 'reference',
 
   marks: '',
   group: 'inline',
   inline: true,
 
+  addStorage() {
+    return {}
+  },
+
   addAttributes() {
     return {
       id: {},
-      location: {}
+      location: {
+        default: ''
+      }
     }
   },
 
@@ -42,12 +51,22 @@ const NoteLink = Node.create({
 
   addCommands() {
     return {
-      setReference: attributes => ({ commands }) => {
+      setReference: attributes => ({ editor, commands }) => {
         return commands
-          .setNode(this.name, attributes)
+          .insertContentAt(editor.state.selection.$anchor.pos, [{ type: this.name, attrs: attributes }])
       }
     }
   },
+
+  addInputRules() {
+    return [{
+      find: /\[\^/,
+      handler: ({ commands, range }) => {
+        commands.deleteRange(range)
+        this.storage.openReferenceSearch?.()
+      }
+    }]
+  }
 })
 
-export default NoteLink
+export default Reference
