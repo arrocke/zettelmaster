@@ -12,4 +12,6 @@ const ReferenceSchema = new Schema({
   url: String,
 })
 
+ReferenceSchema.index({ name: "text", creators: "text", url: "text" }, { default_language: 'none' })
+
 export default model<DbReference>('Reference', ReferenceSchema)

@@ -1,10 +1,10 @@
 import { useCombobox } from 'downshift'
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
 
 interface Item {
   id: string
-  text: string
+  name: string
 }
 
 export interface ReferenceSearchProps {
@@ -20,25 +20,25 @@ export interface ReferenceSearchRef {
 const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ editor, onSelect, onBlur }, ref) => {
   const input = useRef<HTMLInputElement>(null)
 
-  // const fetchItems = useCallback(async (search?: string) => {
-  //   const url = new URL('/api/notes', window.location.href)
-  //   if (search) {
-  //     url.searchParams.append('text', search)
-  //   }
-  //   const response = await fetch(url.toString())
-  //   if (response.status === 200) {
-  //     const { data } = await response.json()
-  //     setItems(data.map((item: any) => ({ id: item.id, text: item.preview })))
-  //   } else {
-  //     setItems([])
-  //   }
-  // }, [])
+  const fetchItems = useCallback(async (search?: string) => {
+    const url = new URL('/api/references', window.location.href)
+    if (search) {
+      url.searchParams.append('text', search)
+    }
+    const response = await fetch(url.toString())
+    if (response.status === 200) {
+      const { data } = await response.json()
+      setItems(data.map((item: any) => ({ id: item.id, name: item.name })))
+    } else {
+      setItems([])
+    }
+  }, [])
 
-  // useEffect(() => {
-  //   fetchItems()
-  // }, [fetchItems])
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
 
-  const [items, setItems] = useState<Item[]>([{ id: '1', text: 'one' }, { id: '2', text: 'two' }])
+  const [items, setItems] = useState<Item[]>([])
   const {
     getMenuProps,
     getInputProps,
@@ -53,12 +53,12 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
         onSelect()
       }
     },
-    // async onInputValueChange({ inputValue }) {
-    //   await fetchItems(inputValue)
-    // },
+    async onInputValueChange({ inputValue }) {
+      await fetchItems(inputValue)
+    },
     items,
     itemToString(item) {
-      return item ? item.text : ''
+      return item ? item.name : ''
     }
   })
 
@@ -89,7 +89,7 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
         `}
         key={`${item.id}-${index}`}
       >
-        {item.text || 'Empty note'}
+        {item.name || 'Unknown'}
       </li>)}
     </ul>
   </div>
