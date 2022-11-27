@@ -9,7 +9,15 @@ import useUnloadWarning from './useUnloadWarning'
 interface NoteData {
   id: string,
   text: DocumentNode
+  references: {
+    id: string
+    name: string
+    creators: string[]
+    url?: string
+  }[]
 }
+
+type MutateNoteData = Pick<NoteData, 'id' | 'text'>
 
 export const NoteView = () => {
   const { noteId } = useParams()
@@ -23,7 +31,7 @@ export const NoteView = () => {
   const [hasChanges, setHasChanges] = useState(false)
   const queryClient = useQueryClient()
   const { mutate, isLoading, reset } = useMutation(
-    async (data: NoteData) => {
+    async (data: MutateNoteData) => {
       await fetch(`/api/notes/${data.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -33,7 +41,7 @@ export const NoteView = () => {
     {
       onMutate: async (note) => {
         await queryClient.cancelQueries(['note', note.id])
-        const prevNote = queryClient.getQueryData<NoteData>(['note', note.id])
+        const prevNote = queryClient.getQueryData<MutateNoteData>(['note', note.id])
         queryClient.setQueryData(['note', note.id], note)
         return { prevNote }
       },
@@ -73,13 +81,25 @@ export const NoteView = () => {
         <span>{hasChanges ? 'Unsaved changes' : 'Saved'}</span>
       </div>
       <RichTextInput
-        className="flex-1"
+        className="flex-1 flex flex-col border-b border-b-slate-400"
         text={data.text}
         onTextChange={text => {
           setHasChanges(true)
           throttledMutate({ id: data.id, text })
         }}
       />
+      <div className="h-1/5 p-4">
+        <h2>References</h2>
+        <ol className="pl-6 list-decimal">
+          {data.references.map(reference => <li key={reference.id}>
+            {
+              reference.url
+                ? <a href={reference.url} target="_blank" rel="noreferrer">{reference.name}</a>
+                : reference.name
+            }
+          </li>)}
+        </ol>
+      </div>
     </div>
   } else {
     return null

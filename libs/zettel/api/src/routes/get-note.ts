@@ -9,10 +9,18 @@ import {
 } from '@zettelmaster/ddd'
 import { DocumentNode } from '@zettelmaster/rich-text'
 import NoteModel from '../db/Note'
+import { HydratedDocument } from 'mongoose'
+import { DbReference } from '../db/Reference'
 
 export interface GetNoteResponseBody {
   id: string
   text: DocumentNode
+  references: {
+    id: string
+    name: string
+    creators: string[]
+    url?: string
+  }[]
 }
 
 export default class GetNoteRoute extends Route<
@@ -25,7 +33,7 @@ export default class GetNoteRoute extends Route<
   path = '/notes/:noteId'
 
   protected async executeImpl(request: RouteRequest<{ noteId: string }, unknown, unknown>): Promise<RouteResponse<GetNoteResponseBody>> {
-    const note = await NoteModel.findById(request.params.noteId)
+    const note = await NoteModel.findById(request.params.noteId).populate<{ references: HydratedDocument<DbReference>[] }>('references')
     if (!note) {
       throw new NotFoundError('note')
     }
@@ -33,7 +41,13 @@ export default class GetNoteRoute extends Route<
     return {
       body: {
         id: note._id.toHexString(),
-        text: note.text
+        text: note.text,
+        references: note.references.map(reference => ({
+          id: reference._id?.toHexString(),
+          name: reference.name,
+          creators: reference.creators,
+          url: reference.url
+        }))
       },
       statusCode: StatusCode.Ok
     }
