@@ -49,8 +49,13 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
     isOpen: true,
     onSelectedItemChange(changes) {
       if (changes.selectedItem) {
-        editor.chain().focus().setReference({ id: changes.selectedItem.id }).run()
         onSelect()
+        editor
+          .chain()
+          .focus()
+          .setReference({ id: changes.selectedItem.id })
+          .setNodeSelection(editor.state.selection.$anchor.pos)
+          .run()
       }
     },
     async onInputValueChange({ inputValue }) {

@@ -53,7 +53,7 @@ const Reference = Node.create<any, { openReferenceSearch?(): void }>({
     return {
       setReference: attributes => ({ editor, commands }) => {
         return commands
-          .insertContentAt(editor.state.selection.$anchor.pos, [{ type: this.name, attrs: attributes }])
+          .insertContent([{ type: this.name, attrs: attributes }])
       }
     }
   },

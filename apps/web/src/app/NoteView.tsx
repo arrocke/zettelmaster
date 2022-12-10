@@ -42,7 +42,10 @@ export const NoteView = () => {
       onMutate: async (note) => {
         await queryClient.cancelQueries(['note', note.id])
         const prevNote = queryClient.getQueryData<MutateNoteData>(['note', note.id])
-        queryClient.setQueryData(['note', note.id], note)
+        queryClient.setQueryData(['note', note.id], {
+          ...prevNote,
+          ...note
+        })
         return { prevNote }
       },
       onSuccess: (response, note) => {
