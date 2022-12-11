@@ -10,14 +10,14 @@ interface Item {
 export interface ReferenceSearchProps {
   editor: Editor
   onSelect(): void
-  onBlur(): void
+  onCancel(): void
 }
 
 export interface ReferenceSearchRef {
   focus(): void
 }
 
-const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ editor, onSelect, onBlur }, ref) => {
+const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ editor, onSelect, onCancel }, ref) => {
   const input = useRef<HTMLInputElement>(null)
 
   const fetchItems = useCallback(async (search?: string) => {
@@ -34,10 +34,6 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
     }
   }, [])
 
-  useEffect(() => {
-    fetchItems()
-  }, [fetchItems])
-
   const [items, setItems] = useState<Item[]>([])
   const {
     getMenuProps,
@@ -45,17 +41,17 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
     highlightedIndex,
     getItemProps,
     selectedItem,
+    reset: _reset
   } = useCombobox({
     isOpen: true,
     onSelectedItemChange(changes) {
       if (changes.selectedItem) {
-        onSelect()
         editor
           .chain()
           .focus()
           .setReference({ id: changes.selectedItem.id })
-          .setNodeSelection(editor.state.selection.$anchor.pos)
           .run()
+        onSelect()
       }
     },
     async onInputValueChange({ inputValue }) {
@@ -67,19 +63,32 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
     }
   })
 
+  useEffect(() => {
+    fetchItems()
+  }, [])
+
   useImperativeHandle(ref, () => {
     return {
       focus() {
         input.current?.focus()
       }
     }
-  }, [])
+  })
 
   return <div className="w-96">
     <input
       placeholder="Best book ever"
       className="focus:outline-none h-8 pl-2 rounded-t-lg border-b border-slate-300 w-full"
-      {...getInputProps({ onBlur, ref: input })}
+      {...getInputProps({
+        onKeyDown: (e) => {
+          console.log(e)
+          if (e.key === 'Escape') {
+            e.preventDefault()
+            onCancel()
+          }
+        },
+        ref: input
+      })}
     />
     <ul
       {...getMenuProps()}

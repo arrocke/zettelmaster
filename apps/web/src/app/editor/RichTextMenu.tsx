@@ -39,7 +39,14 @@ const RichTextMenu = ({ editor }: RichTextMenuProps) => {
   let menuOptions
   switch (subMenu) {
     case 'noteLink': {
-      menuOptions = <NoteLinkSearch editor={editor} onSelect={() => setSubMenu(undefined)} />
+      menuOptions = <NoteLinkSearch
+        editor={editor}
+        onSelect={() => setSubMenu(undefined)}
+        onCancel={() => {
+          setSubMenu(undefined)
+          editor.commands.focus()
+        }}
+      />
       break
     }
     default: {

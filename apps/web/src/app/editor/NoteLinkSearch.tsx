@@ -10,9 +10,10 @@ interface Item {
 export interface NoteLinkSearchProps {
   editor: Editor
   onSelect(): void
+  onCancel(): void
 }
 
-const NoteLinkSearch = ({ editor, onSelect }: NoteLinkSearchProps) => {
+const NoteLinkSearch = ({ editor, onSelect, onCancel }: NoteLinkSearchProps) => {
   const fetchItems = useCallback(async (search?: string) => {
     const url = new URL('/api/notes', window.location.href)
     if (search) {
@@ -60,7 +61,14 @@ const NoteLinkSearch = ({ editor, onSelect }: NoteLinkSearchProps) => {
     <input
       placeholder="Best book ever"
       className="focus:outline-none h-8 pl-2 rounded-t-lg border-b border-slate-300 w-full"
-      {...getInputProps()}
+      {...getInputProps({
+        onKeyDown: e => {
+          if (e.key === 'Escape') {
+            e.preventDefault()
+            onCancel()
+          }
+        }
+      })}
     />
     <ul
       {...getMenuProps()}
