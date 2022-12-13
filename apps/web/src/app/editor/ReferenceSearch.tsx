@@ -1,6 +1,7 @@
 import { useCombobox } from 'downshift'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
+import { Icon } from '../Icon'
 
 interface Item {
   id: string
@@ -28,10 +29,32 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
     const response = await fetch(url.toString())
     if (response.status === 200) {
       const { data } = await response.json()
-      setItems(data.map((item: any) => ({ id: item.id, name: item.name })))
+      const items = data.map((item: any) => ({ id: item.id, name: item.name }))
+      if (search) {
+        setItems([{ id: 'new', name: search }, ...items])
+      } else {
+        setItems(items)
+      }
     } else {
       setItems([])
     }
+  }, [])
+
+  const createReference = useCallback(async (name: string) => {
+    const request = await fetch('api/references', {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (request.status === 201) {
+      const location = request.headers.get('location')
+      if (location) {
+        return location?.split('/').slice(-1)[0]
+      }
+    }
+    throw new Error()
   }, [])
 
   const [items, setItems] = useState<Item[]>([])
@@ -44,13 +67,12 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
     reset: _reset
   } = useCombobox({
     isOpen: true,
-    onSelectedItemChange(changes) {
+    async onSelectedItemChange(changes) {
       if (changes.selectedItem) {
-        editor
-          .chain()
-          .focus()
-          .setReference({ id: changes.selectedItem.id })
-          .run()
+        const id = changes.selectedItem.id === 'new'
+          ? await createReference(changes.inputValue ?? '')
+          : changes.selectedItem.id
+        editor.chain().focus().setReference({ id }).run()
         onSelect()
       }
     },
@@ -81,7 +103,6 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
       className="focus:outline-none h-8 pl-2 rounded-t-lg border-b border-slate-300 w-full"
       {...getInputProps({
         onKeyDown: (e) => {
-          console.log(e)
           if (e.key === 'Escape') {
             e.preventDefault()
             onCancel()
@@ -97,13 +118,15 @@ const ReferenceSearch = forwardRef<ReferenceSearchRef, ReferenceSearchProps>(({ 
       {items.map((item, index) => <li
         {...getItemProps({ item, index })}
         className={`
-          py-2 px-3 flex flex-col border-b border-slate-300
+          py-2 px-3 border-b border-slate-300
           ${highlightedIndex === index ? 'bg-blue-300' : ''}
           ${selectedItem === item ? 'font-bold' : ''}
         `}
         key={`${item.id}-${index}`}
       >
-        {item.name || 'Unknown'}
+        {item.id === 'new'
+          ? <><Icon type="add" /> {`Add "${item.name}"`}</>
+          : (item.name || 'Unknown')}
       </li>)}
     </ul>
   </div>
