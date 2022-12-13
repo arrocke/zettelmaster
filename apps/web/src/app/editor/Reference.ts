@@ -15,12 +15,18 @@ declare module '@tiptap/core' {
 
 export const ReferencePluginKey = new PluginKey('reference')
 
-const Reference = Node.create<any, { openReferenceSearch?(): void }>({
+const Reference = Node.create<{ references: string[] }, { openReferenceSearch?(): void }>({
   name: 'reference',
 
   marks: '',
   group: 'inline',
   inline: true,
+
+  addOptions() {
+    return {
+      references: []
+    }
+  },
 
   addStorage() {
     return {}

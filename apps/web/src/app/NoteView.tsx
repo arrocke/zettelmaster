@@ -86,6 +86,7 @@ export const NoteView = () => {
       <RichTextInput
         className="flex-1 flex flex-col border-b border-b-slate-400"
         text={data.text}
+        references={data.references.map(r => r.id)}
         onTextChange={text => {
           setHasChanges(true)
           throttledMutate({ id: data.id, text })

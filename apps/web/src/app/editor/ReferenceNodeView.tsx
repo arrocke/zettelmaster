@@ -1,7 +1,7 @@
 import { useEffect, useRef, KeyboardEvent, MouseEvent } from 'react'
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react'
 
-const ReferenceNodeView = ({ selected, editor, getPos, node, updateAttributes }: NodeViewProps) => {
+const ReferenceNodeView = ({ selected, editor, getPos, node, extension, updateAttributes }: NodeViewProps) => {
   const locationInput = useRef<HTMLInputElement>(null)
   const measureElement = useRef<HTMLSpanElement>(null)
 
@@ -11,6 +11,9 @@ const ReferenceNodeView = ({ selected, editor, getPos, node, updateAttributes }:
       locationInput.current.style.width = `${Math.max(1, measureElement.current.clientWidth)}px`
     }
   }, [location])
+
+  const index = (extension.options.references as string[]).indexOf(node.attrs['id'])
+  const referenceNumber = index >= 0 ? (index + 1).toString() : '?'
 
   useEffect(() => {
     if (selected) {
@@ -67,7 +70,7 @@ const ReferenceNodeView = ({ selected, editor, getPos, node, updateAttributes }:
       as="span"
       onClick={onClick}
     >
-      {"[1, "}
+      {`[${referenceNumber}, `}
       <input
         ref={locationInput}
         className="focus:outline-none bg-transparent"

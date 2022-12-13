@@ -10,11 +10,12 @@ import ReferenceMenu from './ReferenceMenu'
 
 export interface RichTextInputProps {
   text: any
+  references: string[]
   onTextChange?(text: any): void
   className?: string
 }
 
-const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProps) => {
+const RichTextInput = ({ className = '', references, text, onTextChange }: RichTextInputProps) => {
   const navigate = useNavigate()
 
   const editor = useEditor({
@@ -26,7 +27,7 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
           navigate(href)
         }
       }),
-      Reference.configure(),
+      Reference.configure({ references }),
       Placeholder.configure({
         placeholder: ({ node, pos, editor }) => {
           return node.type.name === 'paragraph' && pos === 0 && !editor.isFocused ? 'Click to start typing' : ''
@@ -44,6 +45,15 @@ const RichTextInput = ({ className = '', text, onTextChange }: RichTextInputProp
       onTextChange?.(editor.getJSON())
     }
   })
+
+  useEffect(() => {
+    if (editor) {
+      const extension = editor.extensionManager.extensions.find(e => e.name === 'reference')
+      if (extension) {
+        extension.options.references = references
+      }
+    }
+  }, [editor, references])
 
   useEffect(() => {
     if (editor && JSON.stringify(text) !== JSON.stringify(editor.getJSON())) {
